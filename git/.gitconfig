@@ -1,0 +1,99 @@
+[alias]
+    st = status -sb
+    ci = commit -v
+    co = checkout
+    br = branch
+    d = diff
+    dt = difftool
+    l = log --oneline --decorate
+    lg = log --graph --oneline --decorate=full
+    lgt = log --graph --pretty=format:%C(yellow)%h%Creset\\ %aI\\ %Cgreen%an%Creset\\ %Cred%d%Creset\\ %s
+    ll = log --no-merges --pretty=format:%C(yellow)%h%Creset\\ %Cgreen%an%Creset\\ %Cred%d%Creset\\ %s
+    llt = log --no-merges --pretty=format:%C(yellow)%h%Creset\\ %aI\\ %Cgreen%an%Creset\\ %Cred%d%Creset\\ %s
+    mine = log --author=irae --no-merges --pretty=format:%C(yellow)%h%Creset\\ %Cgreen%aD%Creset\\ %Cred%d%Creset\\ %s
+    unadd = reset HEAD
+    get = !git co master && git fancy-pull && git submodule update && git delete-merged-branches
+    fancy-pull = !WAS_HEAD=`git rev-parse HEAD` && git fetch --all --prune && git rebase origin/master && git --no-pager diff --stat $WAS_HEAD && git --no-pager ll $WAS_HEAD..HEAD && echo && git st
+    put = !git get && git push && git st
+    statis = !sh -c \"echo \\\"Cacildis!\\\"\"
+    vommit = !sh -c \"cat ~/.gitvommit\"
+    branch-diff = !git diff `git merge-base --octopus master HEAD`
+    bd = !git diff `git merge-base --octopus master HEAD`
+    bdt = !git difftool `git merge-base --octopus master HEAD`
+    aliases = !git config --get-regexp 'alias.*' | colrm 1 6 | sed 's/[ ]/ = /'
+    last24 = log --author=irae --since=yesterday --pretty=oneline --abbrev-commit
+    codereview = !git log -p --no-merges --pretty="format:==========================%n%Cgreen%an%Creset\\ %C\\(yellow\\)`cat .gitcommitlink`%h%Creset\\ %Cred%d%Creset%n%C\\(cyan\\)%s%Creset%n%b=========================="\n2> /dev/null
+    codeoverview = !git log --stat --no-merges --pretty="format:==========================%n%Cgreen%an%Creset\\ %C\\(yellow\\)`cat .gitcommitlink`%h%Creset\\ %Cred%d%Creset%n%C\\(cyan\\)%s%Creset%n%b=========================="\n2> /dev/null
+    cr = !git codereview
+    pretty = !npx prettier --write $(git diff --name-only | grep -E '.js|.jsx' | xargs)
+    lint = !npx eslint --ext js,jsx --fix --quiet $(git diff --name-only | grep -E '.js|.jsx' | xargs)
+    context = "!f() { git log --all --no-merges --pretty='format:%H %an %d %s' ${@:2} | ag -C 8 $1; }; f"
+    search = log -p --source -S
+ 
+[core]
+    pager = delta
+    excludesfile = ~/.gitignore
+    autocrlf = false
+
+[user]
+	name = Irae Carvalho
+	email = irae@irae.pro.br
+
+[push]
+    default = current
+
+[pull]
+    default = matching
+
+[color]
+	branch = auto
+	diff = auto
+	interactive = auto
+	status = auto
+	ui = auto
+
+[difftool "Kaleidoscope"]
+  cmd = /Applications/Kaleidoscope.app/Contents/MacOS/ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[difftool]
+  prompt = false
+  trustExitCode = true
+[mergetool "Kaleidoscope"]
+  cmd = /Applications/Kaleidoscope.app/Contents/MacOS/ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+  trustExitCode = true
+[mergetool]
+	prompt = false
+    trustExitCode = true
+
+[diff]
+  tool = Kaleidoscope
+[merge]
+  tool = Kaleidoscope
+
+[interactive]
+    diffFilter = delta --color-only --features=interactive
+
+[delta]
+    features = decorations
+
+[delta "interactive"]
+    keep-plus-minus-markers = false
+
+[delta "decorations"]
+    commit-decoration-style = blue ol
+    commit-style = raw
+    file-style = omit
+    hunk-header-decoration-style = blue box
+    hunk-header-file-style = red
+    hunk-header-line-number-style = "#067a00"
+    hunk-header-style = file line-number syntax
+[init]
+	defaultBranch = master
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[blame]
+	ignoreRevsFile = .git-blame-ignore-revs
+[safe]
+	directory = /home/node/app
