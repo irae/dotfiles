@@ -1,0 +1,9 @@
+#!/bin/bash
+
+PIDS=`fuser /usr/libexec/rosetta/runtime 2> /dev/null`
+
+if [[ $PIDS ]]; then
+	ps -j -p $PIDS
+else
+	echo "No Intel proccess found"
+fi

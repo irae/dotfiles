@@ -5,7 +5,7 @@
 
 # echo ".zshenv PATH start: ${PATH}"
 
-export PATH="/Users/irae/.local/bin:$PATH"
+export PATH="/Users/irae/.bin:$PATH"
 
 # Using only arm buid here because Sublime will use this file
 eval "$(/opt/homebrew/bin/brew shellenv)"

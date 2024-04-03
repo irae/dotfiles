@@ -1,0 +1,13 @@
+#!/bin/bash
+
+PIDS=`fuser /usr/libexec/rosetta/runtime 2> /dev/null`
+
+if [[ $PIDS ]]; then
+	echo "Found proccess:"
+	ps -p $PIDS
+	echo "killing..."
+	kill -9 $PIDS
+	echo "done"
+else
+	echo "No Intel proccess found"
+fi
