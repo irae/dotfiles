@@ -27,7 +27,7 @@
     cr = !git codereview
     pretty = !npx prettier --write $(git diff --name-only | grep -E '.js|.jsx' | xargs)
     lint = !npx eslint --ext js,jsx --fix --quiet $(git diff --name-only | grep -E '.js|.jsx' | xargs)
-    context = "!f() { git log --all --no-merges --pretty='format:%H %an %d %s' ${@:2} | ag -C 8 $1; }; f"
+    context = "!f() { git log --all --no-merges --pretty='format:%H %an %d %s' ${@:2} | rg -C 8 $1; }; f"
     search = log -p --source -S
  
 [core]
