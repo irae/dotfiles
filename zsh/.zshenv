@@ -5,20 +5,13 @@
 
 # echo ".zshenv PATH start: ${PATH}"
 
-export PATH="/Users/irae/.bin:$PATH"
-
-# Using only arm buid here because Sublime will use this file
-[ -s "/opt/homebrew/bin/brew" ] && eval "$(/opt/homebrew/bin/brew shellenv)"
-[ -s "/usr/local/bin/brew" ] && eval "$(/usr/local/bin/brew shellenv)"
-
-# Multiple Homebrews on Apple Silicon
-# if [ "$(arch)" = "arm64" ]; then
-#     eval "$(/opt/homebrew/bin/brew shellenv)"
-#     echo ".zshenv PATH brew arm: ${PATH}"
-# else
-#     eval "$(/usr/local/bin/brew shellenv)"
-#     echo ".zshenv PATH brew intel: ${PATH}"
-# fi
+# Multiple Homebrews on Apple Silicon or Intel
+if [ -s "/opt/homebrew/bin/brew" ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    export PATH="/opt/homebrew/bin:$PATH"
+elif [ -s "/usr/local/bin/brew" ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
 
 # NVM (duplicated between .zshenv and .zprofile, with different commented lines)
 # export NVM_DIR="$HOME/.nvm"
