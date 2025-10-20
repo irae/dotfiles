@@ -8,7 +8,8 @@
 export PATH="/Users/irae/.bin:$PATH"
 
 # Using only arm buid here because Sublime will use this file
-eval "$(/opt/homebrew/bin/brew shellenv)"
+[ -s "/opt/homebrew/bin/brew" ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+[ -s "/usr/local/bin/brew" ] && eval "$(/usr/local/bin/brew shellenv)"
 
 # Multiple Homebrews on Apple Silicon
 # if [ "$(arch)" = "arm64" ]; then

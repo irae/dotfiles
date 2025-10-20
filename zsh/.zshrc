@@ -8,7 +8,12 @@
 # Shell enhancements
 eval "$(starship init zsh)"
 autoload -Uz compinit && compinit
-source /opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh
+if [ -s "/opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh" ]; then
+    source /opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh
+fi
+if [ -s "/usr/local/Cellar/git-extras/7.2.0/share/git-extras/git-extras-completion.zsh" ]; then
+    source /usr/local/Cellar/git-extras/7.2.0/share/git-extras/git-extras-completion.zsh
+fi
 
 # echo ".zshrc PATH 1: ${PATH}"
 
@@ -39,7 +44,9 @@ function deps {
 }
 
 # Docker
-source /Users/irae/.docker/init-zsh.sh || true # Added by Docker Desktop
+if [ -s "/Users/irae/.docker/cli-plugins/docker-init" ]; then
+    source /Users/irae/.docker/cli-plugins/docker-init || true 
+fi
 
 # echo ".zshrc PATH 2: ${PATH}"
 
