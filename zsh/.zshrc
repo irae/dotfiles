@@ -5,6 +5,17 @@
 
 # echo ".zshrc PATH start: ${PATH}"
 
+# History settings
+HISTFILE=~/.zsh_history       # File to store history
+HISTSIZE=10000                # Number of commands to keep in memory
+SAVEHIST=10000                # Number of commands to save in HISTFILE
+setopt APPEND_HISTORY         # Append history instead of overwriting
+setopt SHARE_HISTORY          # Share history across sessions
+setopt INC_APPEND_HISTORY     # Add commands to history immediately
+setopt HIST_IGNORE_DUPS       # Ignore duplicate commands
+setopt HIST_IGNORE_SPACE      # Ignore commands starting with a space
+setopt HIST_REDUCE_BLANKS     # Remove extra blanks from commands
+
 # Shell enhancements
 eval "$(starship init zsh)"
 autoload -Uz compinit && compinit
@@ -35,7 +46,14 @@ function nvm_use(){
 
 precmd_functions+=(nvm_use)
 
-alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
+if [ -s "/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl" ]; then
+    alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
+fi
+
+if command -v subl.exe >/dev/null 2>&1; then
+    alias subl=subl.exe
+fi
+
 alias ksdiff="/Applications/Kaleidoscope.app/Contents/MacOS/ksdiff"
 alias ls="ls -Gh"
 
@@ -146,13 +164,15 @@ else
     }
 fi
 
-# Multiple Homebrews on Apple Silicon
-if [ "$(arch)" = "arm64" ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-    # echo ".zshrc PATH brew arm: ${PATH}"
-else
-    eval "$(/usr/local/bin/brew shellenv)"
-    # echo ".zshrc PATH brew intel: ${PATH}"
+if command -v brew >/dev/null 2>&1; then
+    # Multiple Homebrews on Apple Silicon
+    if [ "$(arch)" = "arm64" ]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+        # echo ".zshrc PATH brew arm: ${PATH}"
+    else
+        eval "$(/usr/local/bin/brew shellenv)"
+        # echo ".zshrc PATH brew intel: ${PATH}"
+    fi
 fi
 
 # echo ".zshrc PATH end: ${PATH}"
