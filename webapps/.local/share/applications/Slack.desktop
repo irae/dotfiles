@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Slack
+Exec=brave --app=https://app.slack.com/client --no-default-browser-check --profile-directory="Default" %U
+Type=Application
+Icon=/home/irae/.local/share/applications/icons/Slack.png
+Categories=Network;
+Terminal=false
+StartupWMClass=app.slack.com
+StartupNotify=true

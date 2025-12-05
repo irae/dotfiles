@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Fastmail
+Comment=Fastmail
+Exec=brave --app=https://app.fastmail.com/mail/ --no-default-browser-check --profile-directory="Profile 3" %U
+Terminal=false
+Type=Application
+Icon=/home/irae/.local/share/applications/icons/Fastmail.png
+StartupNotify=true
