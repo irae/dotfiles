@@ -21,8 +21,8 @@ export PATH="/Users/irae/.bin:$PATH"
 # fi
 
 # NVM (duplicated between .zshenv and .zprofile, with different commented lines)
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # echo ".zshenv PATH end: ${PATH}"

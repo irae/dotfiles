@@ -44,7 +44,7 @@ function nvm_use(){
     fi
 }
 
-precmd_functions+=(nvm_use)
+# precmd_functions+=(nvm_use)
 
 if [ -s "/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl" ]; then
     alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
@@ -66,104 +66,6 @@ if [ -s "/Users/irae/.docker/cli-plugins/docker-init" ]; then
     source /Users/irae/.docker/cli-plugins/docker-init || true 
 fi
 
-# echo ".zshrc PATH 2: ${PATH}"
-
-# Consider stuff
-# export DB_HOST=sheeta
-
-if [ "$(arch)" = "i386" ]; then
-    function stop {
-        PIDS=( `fuser /usr/libexec/rosetta/runtime 2> /dev/null` )
-        WAIT=0
-        for PID in "${PIDS[@]}"; do
-            COMMAND=( `ps -o command= -p $PID` )
-            if [[ $COMMAND =~ (bin/nf start|firehose) ]]; then
-                WAIT=5
-                echo "SIGINT $COMMAND"
-                kill -SIGINT $PID
-            fi
-        done
-        sleep $WAIT
-        PIDS=( `fuser /usr/libexec/rosetta/runtime 2> /dev/null` )
-        WAIT=0
-        for PID in "${PIDS[@]}"; do
-            COMMAND=( `ps -o command= -p $PID` )
-            if [[ $COMMAND =~ consider.*(node|nginx.*master) ]]; then
-                WAIT=5
-                echo "SIGINT $COMMAND"
-                kill -SIGINT $PID
-            fi
-        done
-        sleep $WAIT
-        PIDS=( `fuser /usr/libexec/rosetta/runtime 2> /dev/null` )
-        WAIT=0
-        for PID in "${PIDS[@]}"; do
-            COMMAND=( `ps -o command= -p $PID` )
-            if [[ $COMMAND =~ (rethinkdb|mendel|Mendel) ]]; then
-                WAIT=5
-                echo "SIGINT $COMMAND"
-                kill -SIGINT $PID
-            fi
-        done
-        sleep $WAIT
-        PIDS=( `fuser /usr/libexec/rosetta/runtime 2> /dev/null` )
-        for PID in "${PIDS[@]}"; do
-            COMMAND=( `ps -o command= -p $PID` )
-            if [[ $COMMAND =~ (rethinkdb|node|nginx|mendel|Mendel) ]]; then
-                echo "SIGKILL $COMMAND"
-                kill -SIGKILL $PID
-            fi
-        done
-
-    }
-else
-    function stop {
-        WAIT=0
-        ps x -o 'pid= command=' 2> /dev/null | grep -E '(bin/nf start|firehose)' | grep -vE '(grep|typescript)' | {
-            while IFS= read -r line
-            do
-                WAIT=5
-                PID=(`echo $line | awk 'NR==1{print $1}'`)
-                echo "SIGINT $line"
-                kill -SIGINT $PID
-            done
-        }
-        sleep $WAIT
-        WAIT=0
-        ps x -o 'pid= command=' 2> /dev/null | grep -E '(bin/node |nginx.*master)' | grep -vE '(grep|typescript)' | {
-            while IFS= read -r line
-            do
-                WAIT=5
-                PID=(`echo $line | awk 'NR==1{print $1}'`)
-                echo "SIGINT $line"
-                kill -SIGINT $PID
-            done
-        }
-        sleep $WAIT
-        WAIT=0
-        ps x -o 'pid= command=' 2> /dev/null | grep -E '(rethinkdb|mendel|Mendel Daemon)' | grep -vE '(grep|typescript)' | {
-            while IFS= read -r line
-            do
-                WAIT=5
-                PID=(`echo $line | awk 'NR==1{print $1}'`)
-                echo "SIGINT $line"
-                kill -SIGINT $PID
-            done
-        }
-        sleep $WAIT
-        ps x -o 'pid= command=' 2> /dev/null | grep -E '(rethinkdb|node|nginx|mendel|Mendel)' | grep -vE '(grep|typescript)' | {
-            while IFS= read -r line
-            do
-                WAIT=5
-                PID=(`echo $line | awk 'NR==1{print $1}'`)
-                echo "SIGKILL $line"
-                kill -SIGKILL $PID
-            done
-        }
-        sleep $WAIT
-    }
-fi
-
 if command -v brew >/dev/null 2>&1; then
     # Multiple Homebrews on Apple Silicon
     if [ "$(arch)" = "arm64" ]; then
@@ -183,3 +85,13 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+bindkey -e
+
+
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
