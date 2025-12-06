@@ -29,7 +29,7 @@
     lint = !npx eslint --ext js,jsx --fix --quiet $(git diff --name-only | grep -E '.js|.jsx' | xargs)
     context = "!f() { git log --all --no-merges --pretty='format:%H %an %d %s' ${@:2} | rg -C 8 $1; }; f"
     search = log -p --source -S
- 
+
 [core]
     pager = delta
     excludesfile = ~/.gitignore
@@ -52,22 +52,29 @@
 	status = auto
 	ui = auto
 
-[difftool "Kaleidoscope"]
-  cmd = /Applications/Kaleidoscope.app/Contents/MacOS/ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
-[difftool]
-  prompt = false
-  trustExitCode = true
-[mergetool "Kaleidoscope"]
-  cmd = /Applications/Kaleidoscope.app/Contents/MacOS/ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
-  trustExitCode = true
-[mergetool]
-	prompt = false
-    trustExitCode = true
-
 [diff]
-  tool = Kaleidoscope
-[merge]
-  tool = Kaleidoscope
+    tool = meld
+[difftool]
+    prompt = false
+[difftool "meld"]
+    cmd = meld "$LOCAL" "$REMOTE"
+
+# [difftool "Kaleidoscope"]
+#   cmd = /Applications/Kaleidoscope.app/Contents/MacOS/ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+# [difftool]
+#   prompt = false
+#   trustExitCode = true
+# [mergetool "Kaleidoscope"]
+#   cmd = /Applications/Kaleidoscope.app/Contents/MacOS/ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+#   trustExitCode = true
+# [mergetool]
+# 	prompt = false
+#     trustExitCode = true
+
+# [diff]
+#   tool = Kaleidoscope
+# [merge]
+#   tool = Kaleidoscope
 
 [interactive]
     diffFilter = delta --color-only --features=interactive
@@ -86,8 +93,10 @@
     hunk-header-file-style = red
     hunk-header-line-number-style = "#067a00"
     hunk-header-style = file line-number syntax
+
 [init]
 	defaultBranch = master
+
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
@@ -95,5 +104,6 @@
 	required = true
 [blame]
 	ignoreRevsFile = .git-blame-ignore-revs
+
 [safe]
 	directory = /home/node/app
