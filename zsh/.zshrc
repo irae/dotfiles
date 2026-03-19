@@ -49,6 +49,36 @@ if command -v subl.exe >/dev/null 2>&1; then
     alias subl=subl.exe
 fi
 
+# usage: iso_to_epoch "2025-04-15T16:51:56.130000+00:00"
+iso_to_epoch() {
+  local input_date="$1"
+  if [[ -z "$input_date" ]]; then
+    echo "Error: Please provide a date string (e.g., 2025-04-15T16:51:56.130000+00:00)"
+    return 1
+  fi
+
+  # Reformat timezone from +00:00 to +0000 for macOS date compatibility
+  local normalized_date="${input_date//+00:00/+0000}"
+
+  # Extract seconds and milliseconds
+  local seconds
+  seconds=$(date -j -f "%Y-%m-%dT%H:%M:%S.%6f%z" "$normalized_date" "+%s" 2>/dev/null)
+  local millis="${input_date#*.}" # Get part after decimal
+  millis="${millis%%+*}"         # Remove timezone
+  millis="${millis:0:3}"         # Take first 3 digits for milliseconds
+
+  if [[ -z "$seconds" ]]; then
+    echo "Error: Invalid date format"
+    return 1
+  fi
+
+  # Combine seconds and milliseconds
+  echo "${seconds}${millis}"
+}
+
+
+precmd_functions+=(nvm_use)
+
 alias ksdiff="/Applications/Kaleidoscope.app/Contents/MacOS/ksdiff"
 alias ls="ls -Gh"
 
@@ -57,7 +87,6 @@ function deps {
 }
 
 # Docker
-<<<<<<< HEAD
 if [ -s "/Users/irae/.docker/cli-plugins/docker-init" ]; then
     source /Users/irae/.docker/cli-plugins/docker-init || true
 fi
@@ -73,7 +102,6 @@ if command -v brew >/dev/null 2>&1; then
     fi
 fi
 
-=======
 source /Users/irae/.docker/init-zsh.sh || true # Added by Docker Desktop
 
 # echo ".zshrc PATH 2: ${PATH}"
@@ -126,7 +154,7 @@ if [ "$(arch)" = "i386" ]; then
 else
     function stop {
         WAIT=0
-        ps x -o 'pid= command=' 2> /dev/null | grep -E '(bin/nf start|firehose)' | grep -vE '(grep|typescript)' | {
+        ps x -o 'pid= command=' 2> /dev/null | grep -E '(bin/nf start|firehose)' | grep -vE '(grep|typescript|/Zed/)' | {
             while IFS= read -r line
             do
                 WAIT=5
@@ -137,7 +165,7 @@ else
         }
         sleep $WAIT
         WAIT=0
-        ps x -o 'pid= command=' 2> /dev/null | grep -E '(bin/node |nginx.*master)' | grep -vE '(grep|typescript)' | {
+        ps x -o 'pid= command=' 2> /dev/null | grep -E '(bin/node |nginx.*master)' | grep -vE '(grep|typescript|/Zed/)' | {
             while IFS= read -r line
             do
                 WAIT=5
@@ -148,17 +176,18 @@ else
         }
         sleep $WAIT
         WAIT=0
-        ps x -o 'pid= command=' 2> /dev/null | grep -E '(rethinkdb|mendel|Mendel Daemon)' | grep -vE '(grep|typescript)' | {
+        ps x -o 'pid= command=' 2> /dev/null | grep -E '(rethinkdb|mendel|Mendel Daemon)' | grep -vE '(grep|typescript|/Zed/)' | {
             while IFS= read -r line
             do
-                WAIT=5
+                WAIT=25
                 PID=(`echo $line | awk 'NR==1{print $1}'`)
                 echo "SIGINT $line"
                 kill -SIGINT $PID
             done
         }
         sleep $WAIT
-        ps x -o 'pid= command=' 2> /dev/null | grep -E '(rethinkdb|node|nginx|mendel|Mendel)' | grep -vE '(grep|typescript)' | {
+        WAIT=0
+        ps x -o 'pid= command=' 2> /dev/null | grep -E '(rethinkdb|node|nginx|mendel|Mendel)' | grep -vE '(grep|typescript|/Zed/)' | {
             while IFS= read -r line
             do
                 WAIT=5
@@ -171,7 +200,6 @@ else
     }
 fi
 
->>>>>>> 4855b24 (Update for better brew setup)
 # echo ".zshrc PATH end: ${PATH}"
 # pnpm
 export PNPM_HOME="/Users/irae/Library/pnpm"
@@ -180,20 +208,14 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
-<<<<<<< HEAD
-#export NVM_DIR="$HOME/.nvm"
-#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-bindkey -e
-
 
 export NVM_DIR="$HOME/.config/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-=======
-
-[ -s "/opt/homebrew/bin/brew" ] && export PATH="/opt/homebrew/bin:$PATH"
+# [ -s "/opt/homebrew/bin/brew" ] && export PATH="/opt/homebrew/bin:$PATH"
 
 export PATH="/Users/irae/.bin:$PATH"
->>>>>>> 4855b24 (Update for better brew setup)
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/irae/.cache/lm-studio/bin"
