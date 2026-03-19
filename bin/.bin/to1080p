@@ -1,0 +1,18 @@
+#!/bin/bash
+
+INPUT="$1"
+OUTPUT="$2"
+
+ffmpeg -i "$INPUT" \
+  -vf "scale=1920:1920:force_original_aspect_ratio=decrease:flags=lanczos" \
+  -c:v hevc_videotoolbox \
+  -q:v 65 \
+  -tag:v hvc1 \
+  -color_primaries bt2020 \
+  -color_trc smpte2084 \
+  -colorspace bt2020nc \
+  -fps_mode passthrough \
+  -c:a copy \
+  "$OUTPUT"
+
+exiftool -TagsFromFile "$INPUT" -all:all -ee -overwrite_original "$OUTPUT"
