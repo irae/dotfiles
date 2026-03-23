@@ -23,21 +23,21 @@ autoload -Uz compinit && compinit
 
 # echo ".zshrc PATH 1: ${PATH}"
 
-function nvm_use(){
-    local nvmrc_path
-    nvmrc_path="$(nvm_find_nvmrc)"
+# function nvm_use(){
+#     local nvmrc_path
+#     nvmrc_path="$(nvm_find_nvmrc)"
 
-    if [ -n "$nvmrc_path" ]; then
-        local nvmrc_node_version
-        nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+#     if [ -n "$nvmrc_path" ]; then
+#         local nvmrc_node_version
+#         nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
 
-        if [ "$nvmrc_node_version" = "N/A" ]; then
-          nvm install
-        elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
-          nvm use
-        fi
-    fi
-}
+#         if [ "$nvmrc_node_version" = "N/A" ]; then
+#           nvm install
+#         elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
+#           nvm use
+#         fi
+#     fi
+# }
 
 # precmd_functions+=(nvm_use)
 
@@ -77,7 +77,7 @@ iso_to_epoch() {
 }
 
 
-precmd_functions+=(nvm_use)
+# precmd_functions+=(nvm_use)
 
 alias ksdiff="/Applications/Kaleidoscope.app/Contents/MacOS/ksdiff"
 alias ls="ls -Gh"
@@ -101,8 +101,6 @@ if command -v brew >/dev/null 2>&1; then
         # echo ".zshrc PATH brew intel: ${PATH}"
     fi
 fi
-
-source /Users/irae/.docker/init-zsh.sh || true # Added by Docker Desktop
 
 # echo ".zshrc PATH 2: ${PATH}"
 
