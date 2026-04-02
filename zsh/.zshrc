@@ -23,23 +23,23 @@ autoload -Uz compinit && compinit
 
 # echo ".zshrc PATH 1: ${PATH}"
 
-# function nvm_use(){
-#     local nvmrc_path
-#     nvmrc_path="$(nvm_find_nvmrc)"
+function nvm_use(){
+    local nvmrc_path
+    nvmrc_path="$(nvm_find_nvmrc)"
 
-#     if [ -n "$nvmrc_path" ]; then
-#         local nvmrc_node_version
-#         nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+    if [ -n "$nvmrc_path" ]; then
+        local nvmrc_node_version
+        nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
 
-#         if [ "$nvmrc_node_version" = "N/A" ]; then
-#           nvm install
-#         elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
-#           nvm use
-#         fi
-#     fi
-# }
+        if [ "$nvmrc_node_version" = "N/A" ]; then
+          nvm install
+        elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
+          nvm use
+        fi
+    fi
+}
 
-# precmd_functions+=(nvm_use)
+precmd_functions+=(nvm_use)
 
 if [ -s "/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl" ]; then
     alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
