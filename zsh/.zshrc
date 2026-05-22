@@ -3,7 +3,7 @@
 # ~/.zprofile - login shells; session-level setup
 # ~/.zshrc   - interactive shells; prompt, completion, aliases, and shell UX
 
-# echo ".zshrc PATH start: ${PATH}"
+# All of PATH should live in .zshenv
 
 # History settings
 HISTFILE=~/.zsh_history       # File to store history
@@ -19,20 +19,34 @@ setopt HIST_REDUCE_BLANKS     # Remove extra blanks from commands
 # Shell enhancements
 eval "$(starship init zsh)"
 
-if [[ "$OSTYPE" == darwin* && -d /usr/local/share/zsh/site-functions ]]; then
-    for completion in /usr/local/share/zsh/site-functions/_*(N@); do
-        if [[ ! -e "$completion" ]]; then
-            fpath=(${fpath:/usr/local/share/zsh/site-functions})
-            break
-        fi
-    done
-    unset completion
+# Completions
+autoload -Uz compinit && compinit
+
+# git-extras completion
+if [ -s "/opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh" ]; then
+    source /opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh
 fi
 
-autoload -Uz compinit && compinit
-[ -s "/opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh" ] && source /opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh
+# Bash completions
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+[ -s "/Users/irae/.bun/_bun" ] && source "/Users/irae/.bun/_bun"
 
-# echo ".zshrc PATH 1: ${PATH}"
+# Aliases
+if [ -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" ]; then
+    alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
+fi
+
+if command -v subl.exe >/dev/null 2>&1; then
+    alias subl=subl.exe
+fi
+
+if [ -x "/Applications/Kaleidoscope.app/Contents/MacOS/ksdiff" ]; then
+    alias ksdiff="/Applications/Kaleidoscope.app/Contents/MacOS/ksdiff"
+fi
+
+if [[ "$OSTYPE" == darwin* ]]; then
+    alias ls="ls -Gh"
+fi
 
 function nvm_use(){
     local nvmrc_path
@@ -51,14 +65,6 @@ function nvm_use(){
 }
 
 precmd_functions+=(nvm_use)
-
-if [ -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" ]; then
-    alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
-fi
-
-if command -v subl.exe >/dev/null 2>&1; then
-    alias subl=subl.exe
-fi
 
 # usage: iso_to_epoch "2025-04-15T16:51:56.130000+00:00"
 iso_to_epoch() {
@@ -87,17 +93,9 @@ iso_to_epoch() {
   echo "${seconds}${millis}"
 }
 
-
-# precmd_functions+=(nvm_use)
-
-alias ksdiff="/Applications/Kaleidoscope.app/Contents/MacOS/ksdiff"
-alias ls="ls -Gh"
-
 function deps {
     jq '. | with_entries( select(.key|contains("ependencies")) )' package.json
 }
-
-# echo ".zshrc PATH 2: ${PATH}"
 
 if [ "$(arch)" = "i386" ]; then
     function stop {
@@ -192,9 +190,3 @@ else
         sleep $WAIT
     }
 fi
-
-# nvm bash_completion
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
-# bun completions
-[ -s "/Users/irae/.bun/_bun" ] && source "/Users/irae/.bun/_bun"
