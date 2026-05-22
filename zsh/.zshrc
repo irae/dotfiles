@@ -1,14 +1,14 @@
-# Load order: .zshenv → .zprofile → .zshrc → .zlogin → .zlogout
-# ~/.zshenv - env for headless process, login shell, interactive shell (Sublime Text, launchd processes, etc)
-# ~/.zprofile - interactive shell - specific for when there is a prompt
-# ~/.zshrc - login shell - child `zsh` process won't load this
+# Load order: .zshenv -> .zprofile -> .zshrc -> .zlogin -> .zlogout
+# ~/.zshenv  - every zsh invocation, including scripts and editor-launched shells
+# ~/.zprofile - login shells; session-level setup
+# ~/.zshrc   - interactive shells; prompt, completion, aliases, and shell UX
 
 # echo ".zshrc PATH start: ${PATH}"
 
 # History settings
 HISTFILE=~/.zsh_history       # File to store history
 HISTSIZE=10000                # Number of commands to keep in memory
-SAVEHIST=10000                # Number of commands to save in HISTFILE
+SAVEHIST=50000                # Number of commands to save in HISTFILE
 setopt APPEND_HISTORY         # Append history instead of overwriting
 setopt SHARE_HISTORY          # Share history across sessions
 setopt INC_APPEND_HISTORY     # Add commands to history immediately
@@ -18,6 +18,17 @@ setopt HIST_REDUCE_BLANKS     # Remove extra blanks from commands
 
 # Shell enhancements
 eval "$(starship init zsh)"
+
+if [[ "$OSTYPE" == darwin* && -d /usr/local/share/zsh/site-functions ]]; then
+    for completion in /usr/local/share/zsh/site-functions/_*(N@); do
+        if [[ ! -e "$completion" ]]; then
+            fpath=(${fpath:/usr/local/share/zsh/site-functions})
+            break
+        fi
+    done
+    unset completion
+fi
+
 autoload -Uz compinit && compinit
 [ -s "/opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh" ] && source /opt/homebrew/opt/git-extras/share/git-extras/git-extras-completion.zsh
 
@@ -41,7 +52,7 @@ function nvm_use(){
 
 precmd_functions+=(nvm_use)
 
-if [ -s "/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl" ]; then
+if [ -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" ]; then
     alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
 fi
 
@@ -85,22 +96,6 @@ alias ls="ls -Gh"
 function deps {
     jq '. | with_entries( select(.key|contains("ependencies")) )' package.json
 }
-
-# Docker
-if [ -s "/Users/irae/.docker/cli-plugins/docker-init" ]; then
-    source /Users/irae/.docker/cli-plugins/docker-init || true
-fi
-
-if command -v brew >/dev/null 2>&1; then
-    # Multiple Homebrews on Apple Silicon
-    if [ "$(arch)" = "arm64" ]; then
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-        # echo ".zshrc PATH brew arm: ${PATH}"
-    else
-        eval "$(/usr/local/bin/brew shellenv)"
-        # echo ".zshrc PATH brew intel: ${PATH}"
-    fi
-fi
 
 # echo ".zshrc PATH 2: ${PATH}"
 
@@ -198,22 +193,8 @@ else
     }
 fi
 
-# echo ".zshrc PATH end: ${PATH}"
-# pnpm
-export PNPM_HOME="/Users/irae/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
+# nvm bash_completion
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-export NVM_DIR="$HOME/.config/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# [ -s "/opt/homebrew/bin/brew" ] && export PATH="/opt/homebrew/bin:$PATH"
-
-export PATH="/Users/irae/.bin:$PATH"
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/irae/.cache/lm-studio/bin"
+# bun completions
+[ -s "/Users/irae/.bun/_bun" ] && source "/Users/irae/.bun/_bun"

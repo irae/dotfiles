@@ -52,29 +52,29 @@
 	status = auto
 	ui = auto
 
-[diff]
-    tool = meld
-[difftool]
-    prompt = false
-[difftool "meld"]
-    cmd = meld "$LOCAL" "$REMOTE"
-
-# [difftool "Kaleidoscope"]
-#   cmd = /Applications/Kaleidoscope.app/Contents/MacOS/ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
-# [difftool]
-#   prompt = false
-#   trustExitCode = true
-# [mergetool "Kaleidoscope"]
-#   cmd = /Applications/Kaleidoscope.app/Contents/MacOS/ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
-#   trustExitCode = true
-# [mergetool]
-# 	prompt = false
-#     trustExitCode = true
-
 # [diff]
-#   tool = Kaleidoscope
-# [merge]
-#   tool = Kaleidoscope
+#     tool = meld
+# [difftool]
+#     prompt = false
+# [difftool "meld"]
+#     cmd = meld "$LOCAL" "$REMOTE"
+
+[difftool "Kaleidoscope"]
+  cmd = /Applications/Kaleidoscope.app/Contents/MacOS/ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[difftool]
+  prompt = false
+  trustExitCode = true
+[mergetool "Kaleidoscope"]
+  cmd = /Applications/Kaleidoscope.app/Contents/MacOS/ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+  trustExitCode = true
+[mergetool]
+	prompt = false
+    trustExitCode = true
+
+[diff]
+  tool = Kaleidoscope
+[merge]
+  tool = Kaleidoscope
 
 [interactive]
     diffFilter = delta --color-only --features=interactive

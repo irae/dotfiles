@@ -1,9 +1,7 @@
-# Load order: .zshenv → .zprofile → .zshrc → .zlogin → .zlogout
-# ~/.zshenv - env for headless process, login shell, interactive shell (Sublime Text, launchd processes, etc)
-# ~/.zprofile - interactive shell - specific for when there is a prompt
-# ~/.zshrc - login shell - child `zsh` process won't load this
-
-# echo ".zshenv PATH start: ${PATH}"
+# Load order: .zshenv -> .zprofile -> .zshrc -> .zlogin -> .zlogout
+# ~/.zshenv   - every zsh invocation, including scripts and editor-launched shells
+# ~/.zprofile - login shells; session-level setup
+# ~/.zshrc    - interactive shells; prompt, completion, aliases, and shell UX
 
 # Multiple Homebrews on Apple Silicon or Intel
 if [ -s "/opt/homebrew/bin/brew" ]; then
@@ -13,9 +11,13 @@ elif [ -s "/usr/local/bin/brew" ]; then
     eval "$(/usr/local/bin/brew shellenv)"
 fi
 
-# NVM (duplicated between .zshenv and .zprofile, with different commented lines)
+# NVM (paths and vars here, completion on .zshrc)
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# echo ".zshenv PATH end: ${PATH}"
+# bun (paths and vars here, completion on .zshrc)
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Created by `pipx` on 2026-05-21 21:54:43
+export PATH="$PATH:/Users/irae/.local/bin"
