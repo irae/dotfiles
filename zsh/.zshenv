@@ -19,6 +19,15 @@ export NVM_DIR="$HOME/.nvm"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+# Docker Desktop CLI (command path belongs in .zshenv)
+export DOCKER_DESKTOP_BIN="/Applications/Docker.app/Contents/Resources/bin"
+if [ -d "$DOCKER_DESKTOP_BIN" ]; then
+    case ":$PATH:" in
+      *":$DOCKER_DESKTOP_BIN:"*) ;;
+      *) export PATH="$DOCKER_DESKTOP_BIN:$PATH" ;;
+    esac
+fi
+
 # Created by `pipx` on 2026-05-21 21:54:43
 export PATH="$PATH:/Users/irae/.local/bin"
 
