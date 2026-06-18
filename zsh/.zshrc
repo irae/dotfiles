@@ -48,6 +48,13 @@ if [[ "$OSTYPE" == darwin* ]]; then
     alias ls="ls -Gh"
 fi
 
+# This tricks `pi` coding agent to have a complete separate installation
+function pi-rpiv() {
+    export PI_CODING_AGENT_DIR="$HOME/.pi-rpiv"
+    export PI_CODING_AGENT_SESSION_DIR="$HOME/.pi-rpiv/sessions"
+    pi "$@"
+}
+
 function nvm_use(){
     local nvmrc_path
     nvmrc_path="$(nvm_find_nvmrc)"
