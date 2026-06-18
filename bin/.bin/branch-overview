@@ -1,0 +1,94 @@
+#!/bin/bash
+
+set -e
+
+worktree_branches=$(git worktree list --porcelain 2>/dev/null | grep '^branch' | sed 's/^branch refs\/heads\///' || echo "")
+all_branches=$(git branch -l | sed 's/^[*+ ]*//')
+
+branches_to_check=""
+while IFS= read -r branch; do
+  [ -z "$branch" ] && continue
+  if ! echo "$worktree_branches" | grep -q "^${branch}$"; then
+    branches_to_check+="$branch"$'\n'
+  fi
+done <<< "$all_branches"
+
+data_lines=()
+while IFS= read -r branch; do
+  [ -z "$branch" ] && continue
+
+  branch_date=$(git log -1 --format=%ct "$branch" 2>/dev/null || echo "0")
+  base=$(git merge-base --octopus master "$branch" 2>/dev/null || echo "")
+  [ -z "$base" ] && continue
+
+  base_date=$(git log -1 --format=%ct "$base" 2>/dev/null || echo "0")
+  ahead=$(git rev-list --count "$base..$branch" 2>/dev/null || echo "0")
+  behind=$(git rev-list --count "$base..master" 2>/dev/null || echo "0")
+
+  mergeable="yes"
+  merge_output=$(git merge-tree "$base" master "$branch" 2>/dev/null || echo "")
+  if echo "$merge_output" | grep -q "<<<<<<<"; then
+    mergeable="no"
+  fi
+
+  plus_minus=""
+  if [ "$ahead" -gt 0 ]; then
+    stats=$(git diff --shortstat "$base..$branch" 2>/dev/null || echo "")
+    ins=$(echo "$stats" | grep -oE '[0-9]+ insertions?\(\+\)' | grep -oE '[0-9]+' || echo "")
+    del=$(echo "$stats" | grep -oE '[0-9]+ deletions?\(\-\)' | grep -oE '[0-9]+' || echo "")
+    if [ -n "$ins" ] && [ -n "$del" ]; then
+      plus_minus="+$ins, -$del"
+    elif [ -n "$ins" ]; then
+      plus_minus="+$ins"
+    elif [ -n "$del" ]; then
+      plus_minus="-$del"
+    fi
+  fi
+
+  branch_date_str=$(date -r "$branch_date" +"%Y-%m-%d" 2>/dev/null || echo "N/A")
+  base_date_str=$(date -r "$base_date" +"%Y-%m-%d" 2>/dev/null || echo "N/A")
+
+  data_lines+=("$branch_date|$branch|$branch_date_str|$base_date_str|$ahead|$behind|$mergeable|$plus_minus")
+done <<< "$branches_to_check"
+
+IFS=$'\n' sorted_lines=($(sort <<<"${data_lines[*]}" -t'|' -k1 -rn))
+unset IFS
+
+name_width=4
+date_width=4
+base_width=4
+ahead_width=5
+behind_width=6
+merge_width=5
+plus_width=3
+
+for line in "${sorted_lines[@]}"; do
+  IFS='|' read -r _ name date base ahead behind mergeable plus_minus <<< "$line"
+  [ ${#name} -gt $name_width ] && name_width=${#name}
+  [ ${#date} -gt $date_width ] && date_width=${#date}
+  [ ${#base} -gt $base_width ] && base_width=${#base}
+  [ ${#ahead} -gt $ahead_width ] && ahead_width=${#ahead}
+  [ ${#behind} -gt $behind_width ] && behind_width=${#behind}
+  [ ${#mergeable} -gt $merge_width ] && merge_width=${#mergeable}
+  [ ${#plus_minus} -gt $plus_width ] && plus_width=${#plus_minus}
+done
+
+printf "| %-${name_width}s | %-${date_width}s | %-${base_width}s | %${ahead_width}s | %${behind_width}s | %-${merge_width}s | %-${plus_width}s |\n" \
+  "Name" "Date" "Base" "Ahead" "Behind" "Merge" "+/-"
+
+dashes_name=$(printf '%*s' $((name_width)) | tr ' ' '-')
+dashes_date=$(printf '%*s' $((date_width)) | tr ' ' '-')
+dashes_base=$(printf '%*s' $((base_width)) | tr ' ' '-')
+dashes_ahead=$(printf '%*s' $((ahead_width)) | tr ' ' '-')
+dashes_behind=$(printf '%*s' $((behind_width)) | tr ' ' '-')
+dashes_merge=$(printf '%*s' $((merge_width)) | tr ' ' '-')
+dashes_plus=$(printf '%*s' $((plus_width)) | tr ' ' '-')
+
+printf "|-%s-|-%s-|-%s-|-%s-|-%s-|-%s-|-%s-|\n" \
+  "$dashes_name" "$dashes_date" "$dashes_base" "$dashes_ahead" "$dashes_behind" "$dashes_merge" "$dashes_plus"
+
+for line in "${sorted_lines[@]}"; do
+  IFS='|' read -r _ name date base ahead behind mergeable plus_minus <<< "$line"
+  printf "| %-${name_width}s | %-${date_width}s | %-${base_width}s | %${ahead_width}s | %${behind_width}s | %-${merge_width}s | %-${plus_width}s |\n" \
+    "$name" "$date" "$base" "$ahead" "$behind" "$mergeable" "$plus_minus"
+done
