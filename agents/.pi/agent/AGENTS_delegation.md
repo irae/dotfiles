@@ -1,0 +1,1 @@
+../../.agents/AGENTS_delegation.md
