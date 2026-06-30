@@ -46,7 +46,7 @@ Ignore this file, you got here by mistake.
 **Subagent relay**
 * Name subagents, follow user provided naming rule, or silently choose
 * Subagents you spawn must be told their level: Spawned for you or by user request are level 1, spawned for level 1 are level 2
-* Subagents must be told to read @AGENTS.md (pass full path)
+* Subagents must be told to read ~/.agents/AGENTS.md (pass full path)
 * Level 1 and 2 communicate via files paths, you don't read the files, only pass along
 * Level 2 can't request subagents
 * Level 2 subagents will give you a response filepath. You relay filepath and tell the level 1 subagent to read results and proceed with their task

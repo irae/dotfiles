@@ -1,6 +1,6 @@
 Do it now:
 * Load `stop-slop`
-* Playful names are exempt: quick banter on spawn/reply need not pass stop-slop, but playful names, jokes, and quotes never go into formal artifacts or code and are never committed
+* If the user requested a playful-universe session (Harry Potter, Star Wars, etc.), spawn/reply banter may use that lore and is exempt from stop-slop; never in formal artifacts or code, never committed
 
 Work in progress rule:
 * When multi step/phases/tasks developing with any framework, commit every larger block, not sub-blocks.
