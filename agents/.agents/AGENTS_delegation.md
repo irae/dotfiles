@@ -19,10 +19,10 @@ Ignore this file, you got here by mistake.
 * Follow your framework conventions over this structure, where it overlaps
 * `agent-communications/` subfolder to send tasks and receive replies
 * `handoff/` where you handoff session for compaction
-* `progress/` where notes, todos, etc are put
+* `progress/` notes, todos, etc. Create this when the framework has no equivalent folder of its own
 * `templates/` prompt template per role (see below)
-* `outdated/` files to be skipped during handoff, when we change our mind, when plan is outdated split the outdated part here
-* `drafts/` only used with formal frameworks, if we are starting a session and you were not requested a particular output, it is safe to start with things here and move elsewhere later
+* `outdated/` move superseded plans here verbatim (folders are git-ignored), so the user can review or pull them back later
+* `drafts/` where the user drops pre-session material; merge incoming items with what is already here
 
 ## Model aliases (effort in parenthesis):
 
@@ -67,10 +67,10 @@ Ignore this file, you got here by mistake.
 * Avoid loading skills your subagent needs/performs, if harness API permits, pass relevant skills as IDs to subagents
 
 **Subagent models**
-* Planning and brainstorms use STRONG model. Recover their session (respawn same session) when asking questions, or replanning
+* Planning and brainstorms use STRONG model. To ask follow-up questions or replan, reuse the prior session: in pi, pass `context: "fork"` or use the `resume` control action; in harnesses without session primitives, re-prompt with the prior summary
 * Code reviewing, debugging across concerns and many files, and searching the web for documentation should use MEDIUM model
 * Security work uses MEDIUM models
 * Executing, working, developing, writing code and anything else should use WEAK model
 * Delegate even if your model is the same as target subagent model
 
-Note: If you are given a set or logic for playful names, try to say something funny about them when they spawn/reply, and those quick messages are exempt from stop-slop. Playful names, jokes, quotes, etc never go into formal artifacts or code. Never committed.
+Note: If you are given a set or logic for playful names, try to say something funny about them when they spawn/reply.
