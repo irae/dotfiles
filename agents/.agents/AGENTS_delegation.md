@@ -61,13 +61,13 @@ Ignore this file, you got here by mistake.
 
 **Rules to delegating to subagents:**
 * Don't fork your context unless the user told you, send file references instead
-* When I say to start an agent with a role, it means to find the best agent type, and load the relevant skills I have installed that match the role
+* When I say to start an agent with a role, it means to find the best agent type and tell the subagent which skills to load for that role
 * Use previously written template or write a minimal prompt template per role for reuse, so you don't write it over and over
 * Prefer pointing subagents to documentation, framework and communication files. Add context missing from files
-* Avoid loading skills your subagent needs/performs, if harness API permits, pass relevant skills as IDs to subagents
+* Don't load execution skills yourself; the subagent loads them. If the harness lets you pass skills as IDs, do that; otherwise name them in the brief
 
 **Subagent models**
-* Planning and brainstorms use STRONG model. To ask follow-up questions or replan, reuse the prior session: in pi, pass `context: "fork"` or use the `resume` control action; in harnesses without session primitives, re-prompt with the prior summary
+* Planning and brainstorms use STRONG model. To ask follow-up questions or replan, reuse the prior session: in pi, pass `context: "fork"` or use the `resume` control action; in harnesses without session primitives, re-prompt with the prior summary. If a prior session can't be resumed, the rebrief must include the skill-loading instructions again
 * Code reviewing, debugging across concerns and many files, and searching the web for documentation should use MEDIUM model
 * Security work uses MEDIUM models
 * Executing, working, developing, writing code and anything else should use WEAK model
