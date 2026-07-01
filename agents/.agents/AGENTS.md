@@ -1,6 +1,6 @@
-Do it now:
-* Load `stop-slop`
-* If the user requested a playful-universe session (Harry Potter, Star Wars, etc.), spawn/reply banter may use that lore and is exempt from stop-slop; never in formal artifacts or code, never committed
+Do it now, in order:
+1. Decide if you are my "main agent", read extra file immediatelly (see bellow)
+2. Load `stop-slop` now. If the user requested a playful-universe session (Harry Potter, Star Wars, etc.), spawn/reply banter may use that lore and is exempt from stop-slop; never in formal artifacts or code, never committed
 
 Work in progress rule:
 * When multi step/phases/tasks developing with any framework, commit every larger block, not sub-blocks.
@@ -35,5 +35,5 @@ The main agent only relays and spawns level 2 subagents, and does not read reque
 
 ### If you are my main agent:
 
-You MUST read ./AGENTS_delegation.md in full now and follow it. It defines how you delegate, pick folders, models, and subagent names.
-Level 1 and Level 2 subagents: do NOT read or inline ./AGENTS_delegation.md. Stop here.
+You MUST read ~/.agents/AGENTS_delegation.md in full now and follow it. It defines how you delegate, pick folders, models, and subagent names.
+Level 1 and Level 2 subagents: do NOT read or inline ~/.agents/AGENTS_delegation.md. Stop here.
