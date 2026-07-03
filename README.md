@@ -40,6 +40,6 @@ stow bin
 
 That's it. Four steps, relative to the dotfiles folder, no fluff.
 
-## rethinkdb-python --help crash
+## rethinkdb-python macOS bugs
 
-After `pipx install/upgrade/reinstall rethinkdb`, run `patch-rethinkdb-python-help` to fix an unreported upstream `--help` crash (real usage is unaffected; see the script's comments).
+After `pipx install/upgrade/reinstall rethinkdb`, run `patch-rethinkdb-python` to fix unreported upstream bugs (`--help` crash, dump/restore/export/import crashing with "cannot pickle '_thread._local' object" on macOS; see the script's comments).

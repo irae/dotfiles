@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+# Patches the locally installed `rethinkdb` PyPI package (via pipx) to work
+# around unreported upstream bugs that hit every rethinkdb-dump/restore/
+# export/import invocation on macOS. Each fix targets rethinkdb/*.py in the
+# pipx venv's site-packages directly. Safe to re-run: each fix is a no-op if
+# already applied, and re-patches after `pipx upgrade/reinstall rethinkdb`
+# restores the original (unpatched) files.
+set -euo pipefail
+
+site_packages=$(find "$HOME/.local/pipx/venvs/rethinkdb/lib" -maxdepth 3 -path "*/site-packages" 2>/dev/null | head -1)
+
+if [ -z "$site_packages" ]; then
+    echo "patch-rethinkdb-python: rethinkdb pipx venv not found, nothing to patch." >&2
+    exit 1
+fi
+
+rethinkdb_dir="$site_packages/rethinkdb"
+
+# --- Fix 1: --help crashes on every rethinkdb-* command ---------------------
+# utils_common.py's CommonOptionChecker.take_action() raises
+# "Destination can not be none" for ANY option with dest=None, but optparse's
+# built-in -h/--help option always has dest=None by design. Present in every
+# rethinkdb release back to 2.4.4; unreported upstream. Real usage (passing
+# actual flags) is unaffected; only bare --help crashes.
+patch_help_crash() {
+    local target="$rethinkdb_dir/utils_common.py"
+    python3 - "$target" <<'PYEOF'
+import sys
+
+path = sys.argv[1]
+src = open(path).read()
+
+broken = '''            def take_action(self, action, dest, opt, value, values, parser):
+                if dest is None:
+                    raise AssertionError("Destination can not be none")
+
+                if action == "add_key":
+                    if self.metavar is None:
+                        raise AssertionError("Metavar can not be none")
+'''
+
+fixed = '''            def take_action(self, action, dest, opt, value, values, parser):
+                if action == "add_key":
+                    if dest is None:
+                        raise AssertionError("Destination can not be none")
+                    if self.metavar is None:
+                        raise AssertionError("Metavar can not be none")
+'''
+
+if fixed in src:
+    print(f"  [help-crash] already patched ({path})")
+    sys.exit(0)
+
+if broken not in src:
+    sys.exit(f"  [help-crash] expected snippet not found in {path}, "
+              "package version may have changed, refusing to patch")
+
+open(path, "w").write(src.replace(broken, fixed, 1))
+print(f"  [help-crash] patched {path}")
+PYEOF
+}
+
+# --- Fix 2: dump/restore/export/import crash with "cannot pickle
+#     '_thread._local' object" -----------------------------------------------
+# macOS's multiprocessing default start method has been "spawn" since Python
+# 3.8 (Linux still defaults to "fork"). Under "spawn", every arg passed to a
+# multiprocessing.Process must be pickled; RetryQuery (attached to every
+# SourceFile as query_runner) holds a threading.local() that can never be
+# pickled, on any Python version, regardless of its contents. The package's
+# own code (_import.py, _export.py) just calls
+# multiprocessing.get_context(multiprocessing.get_start_method()), i.e.
+# inherits whatever the platform default is, instead of forcing "fork" the
+# way the code actually requires. This is why the (mostly-Linux) community
+# never reported it. Fix: force the global default context to "fork" on
+# macOS, at the one place all four entrypoints (_dump/_restore/_export/
+# _import.py) import early: utils_common.py.
+patch_spawn_pickle_crash() {
+    local target="$rethinkdb_dir/utils_common.py"
+    python3 - "$target" <<'PYEOF'
+import sys
+
+path = sys.argv[1]
+src = open(path).read()
+
+marker = "# patch-rethinkdb-python: force fork on macOS"
+if marker in src:
+    print(f"  [spawn-pickle] already patched ({path})")
+    sys.exit(0)
+
+anchor = "import threading\n"
+if anchor not in src:
+    sys.exit(f"  [spawn-pickle] expected anchor not found in {path}, "
+              "package version may have changed, refusing to patch")
+
+injection = (
+    anchor
+    + "\n"
+    + marker
+    + "\n"
+    + "import multiprocessing as _multiprocessing\n"
+    + "import sys as _sys\n"
+    + "if _sys.platform == \"darwin\":\n"
+    + "    try:\n"
+    + "        _multiprocessing.set_start_method(\"fork\", force=True)\n"
+    + "    except RuntimeError:\n"
+    + "        pass\n"
+)
+
+open(path, "w").write(src.replace(anchor, injection, 1))
+print(f"  [spawn-pickle] patched {path}")
+PYEOF
+}
+
+patch_help_crash
+patch_spawn_pickle_crash
