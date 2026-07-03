@@ -39,3 +39,7 @@ stow bin
 ```
 
 That's it. Four steps, relative to the dotfiles folder, no fluff.
+
+## rethinkdb-python --help crash
+
+After `pipx install/upgrade/reinstall rethinkdb`, run `patch-rethinkdb-python-help` to fix an unreported upstream `--help` crash (real usage is unaffected; see the script's comments).
