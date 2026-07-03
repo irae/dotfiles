@@ -6,6 +6,17 @@ Work in progress rule:
 * When multi step/phases/tasks developing with any framework, commit every larger block, not sub-blocks.
 * Minimize in-code comments. Exceptions include dev-scripts inline docs, hidden behaviors cross-cutting many files, code written to avoid bugs in dependencies, unexpected external APIs and service behavior, and the user told you to document narrow cases
 
+# Overruling superpowers
+
+Exceptions that apply whenever superpowers skills are in use:
+
+* Don't offer to start implementing after planning. This user prefers a few cycles of plan review in prose.
+* In-repo spec rules and directives win; use superpowers guidance where it does not conflict.
+* Code blocks in plans are guidance, not implementation. For new files and interfaces, state which files exist and what they export/consume, not inner implementation. Code is allowed for small fixes and where two places must mirror each other; larger blocks become a description of the required outcome.
+* Exact file paths, commands, and identifiers (function names, error codes, config keys) remain mandatory — only implementation bodies shrink.
+* Do not write test implementations. Write the test blocks (before/after/describe/it, etc.) including edge cases, each with a code comment stating its intent. Include the file's initialization (requires, env setup) so the test type is visible.
+* Tell them when to commit, not their commit messages, etc.
+
 # Delegation Framework
 
 If your initial prompt didn't tell you otherwise, you are my main agent. Aliases: "Orchestrator", "Coordinator", or "Manager".

@@ -7,22 +7,23 @@ Ignore this file, you got here by mistake.
 **Root folder**
 * Best if framework folders are git-ignored and exist, e.g. docs/superpowers/ and .rpiv/
 * Fallback to build/, artifacts/, etc.
-* If none available, use `/tmp/`
+* If none available, use `/tmp/[repo-name]/delegation/`
 
 **Guidelines**
 * Once root is decided, use this structure, pass full path to subagents
 * You tell what each subagent needs to know, not the whole structure
 * All files use meaningful slugs up to 50 chars in plaintext format
-* If using agent names prefix name before dates, otherwise roles
+* If using agent names prefix name before dates, otherwise roles before dates
 
 **Structure:**
 * Follow your framework conventions over this structure, where it overlaps
 * `agent-communications/` subfolder to send tasks and receive replies
 * `handoff/` where you handoff session for compaction
 * `progress/` notes, todos, etc. Create this when the framework has no equivalent folder of its own
-* `templates/` prompt template per role (see below)
 * `outdated/` move superseded plans here verbatim (folders are git-ignored), so the user can review or pull them back later
 * `drafts/` where the user drops pre-session material; merge incoming items with what is already here
+* `templates/` prompt template per role (see below)
+* `templates/` special treatment: if you are on a git worktree but not main worktree, resolve the main worktree and scout for gitgnored templates/ folder with prompt templates. Then symlink their `templates/` to your root folder. This way templates are shared per repo, across agent runs. As user tweaks those, the tweaks are propagated across. Start with the templates already there.
 
 ## Model aliases (effort in parenthesis):
 
