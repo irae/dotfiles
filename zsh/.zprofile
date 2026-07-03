@@ -3,4 +3,11 @@
 # ~/.zprofile - login shells; session-level setup
 # ~/.zshrc   - interactive shells; prompt, completion, aliases, and shell UX
 
-# Login-shell setup goes here when needed.
+# macOS's /etc/zprofile runs path_helper before this file, which re-prepends
+# /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin ahead of the PATH .zshenv built.
+# Re-assert Homebrew's PATH here so it wins over system binaries (e.g. python3, pip3).
+if [ -s "/opt/homebrew/bin/brew" ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -s "/usr/local/bin/brew" ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
