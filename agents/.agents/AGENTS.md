@@ -5,6 +5,7 @@ Do it now, in order:
 Work in progress rule:
 * When multi step/phases/tasks developing with any framework, commit every larger block, not sub-blocks.
 * Minimize in-code comments. Exceptions include dev-scripts inline docs, hidden behaviors cross-cutting many files, code written to avoid bugs in dependencies, unexpected external APIs and service behavior, and the user told you to document narrow cases
+* Never use `git stash` in a repo with multiple worktrees (linked worktrees, agent worktree pools, etc.) unless you have a safe, scoped way to do it — e.g. a stash message tagged with the worktree name/prefix, and immediate verification that the popped diff actually matches what you stashed. `refs/stash` is a single ref shared across every worktree of a repo, not per-worktree; two agents in different worktrees both stashing can silently cross-contaminate each other's working trees. Prefer a throwaway commit on a scratch branch, or a plain diff file, over stash when working in a repo you know has other active worktrees.
 
 # Overruling superpowers
 
@@ -16,6 +17,7 @@ Exceptions that apply whenever superpowers skills are in use:
 * Exact file paths, commands, and identifiers (function names, error codes, config keys) remain mandatory — only implementation bodies shrink.
 * Do not write test implementations. Write the test blocks (before/after/describe/it, etc.) including edge cases, each with a code comment stating its intent. Include the file's initialization (requires, env setup) so the test type is visible.
 * Tell them when to commit, not their commit messages, etc.
+* When executing a plan, before saying to the user we are done, ask a final STRONG reviewer to look at code cleanliness, adherance to codebase standards and a final retest.
 
 # Delegation Framework
 

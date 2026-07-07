@@ -54,9 +54,51 @@ Ignore this file, you got here by mistake.
 
 **Adjusted behavior based on your model**
 * If you are a WEAK model, don't try to understand architecture
-* If you are a WEAK model during multi-step execution of plans, ask narrow questions to the planner instead
+* If you are a WEAK model during multi-step execution of plans, ask narrow questions to the planner instead of user
 * When you are WEAK and WEAK implementer disagrees with the design/architecture, halt and escalate to the user
 * If you are a STRONG model, catch subagent architectural mistakes via their responses and summaries, spawn a narrow scoped reviewer to check the code if you are suspicious of mistakes from WEAK agents summaries
+
+## Agent "watchdog" with ScheduleWakeup
+
+Subagents can stall when spawned without oversight: an agent loops, times out, hits the 5-hour context limit, or tooling hangs. Use watchdog ScheduleWakeups to detect and recover from these conditions.
+
+### Subagent stall prevention
+
+For each subagent you spawn, estimate its task duration, then schedule a ScheduleWakeup for double that time. When it fires:
+
+1. Check the agent's status (is it progressing, stuck, or done?)
+2. If stuck, restart it with a fresh prompt
+3. If it's running long-wait operations (deploying, migrating databases), reschedule without interrupting
+4. If it will continue normally, say nothing in chat and reschedule
+
+Use this pattern:
+
+```javascript
+ScheduleWakeup({
+  delaySeconds: estimatedTaskSeconds * 2,
+  prompt: "Check agent [name] for stall per AGENTS_delegation.md",
+  reason: "Stall prevention",
+})
+```
+
+### Plan exhaustion prevention
+
+When the user signals concern about context limits, maintain 5 overlapping ScheduleWakeups at 1h, 2h, 3h, 4h, and 5h. Each time one fires, reschedule it 5h later. This sliding alarm window ensures early warning if the session stalls.
+
+When a plan-exhaustion alarm fires, analyze the chat:
+- If agents are working, the plan is still consuming credits — reschedule
+- If you and the user are both idle, there's nothing to resume — reschedule anyway
+
+Use this pattern:
+
+```javascript
+ScheduleWakeup({
+  delaySeconds: 3600, // 1h, 2h, 3h, 4h, or 5h from now
+  prompt: "Check main conversation and running agents for stalled work; resume if needed",
+  reason: "Plan exhaustion checkpoint",
+})
+```
+
 
 ## Choosing subagents types, roles and names
 
@@ -70,8 +112,7 @@ Ignore this file, you got here by mistake.
 **Subagent models**
 * Planning and brainstorms use STRONG model. To ask follow-up questions or replan, reuse the prior session: in pi, pass `context: "fork"` or use the `resume` control action; in harnesses without session primitives, re-prompt with the prior summary. If a prior session can't be resumed, the rebrief must include the skill-loading instructions again
 * Code reviewing, debugging across concerns and many files, and searching the web for documentation should use MEDIUM model
-* Security work uses MEDIUM models
-* Executing, working, developing, writing code and anything else should use WEAK model
+* Final review of tasks towards the end of plan execution should be done with STRONG models. Their asks for refactor should be done by STRONG implementers.
+* Security work uses STRONG models
+* Executing, working, developing, writing code and anything else should use WEAK model, if they fail twice, give their progress and shortcomings to a MEDIUM fresh agent
 * Delegate even if your model is the same as target subagent model
-
-Note: If you are given a set or logic for playful names, try to say something funny about them when they spawn/reply.
