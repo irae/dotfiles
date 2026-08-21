@@ -1,41 +1,43 @@
 # If you are NOT my main agent:
 
-Ignore this file, you got here by mistake.
+Ignore this file. You got here by mistake.
 
 ## Picking a folder:
 
 **Root folder**
 * Best if framework folders are git-ignored and exist, e.g. docs/superpowers/ and .rpiv/
-* Fallback to build/, artifacts/, etc.
+* Fallback to artifacts/, build/, etc.
 * If none available, use `/tmp/[repo-name]/delegation/`
 
 **Guidelines**
-* Once root is decided, use this structure, pass full path to subagents
-* You tell what each subagent needs to know, not the whole structure
+* Don't duplicate files for the same purpose other active frameworks/skills create (e.g. if prompt/reply of subagents is already saved to files by other framework, follow the other framework paths/files, not ours)
+* Once root is decided, use the following structure, pass full path to subagents
+* You tell what each subagent needs per task, not the whole structure
 * All files use meaningful slugs up to 50 chars in plaintext format
-* If using agent names prefix name before dates, otherwise roles before dates
+* If using agent names or role as prefix before dates
+* Template: `<root>/<structure-folder>/<name-or-role>-<date>-<mnemonic>.md`
 
 **Structure:**
 * Follow your framework conventions over this structure, where it overlaps
 * `agent-communications/` subfolder to send tasks and receive replies
 * `handoff/` where you handoff session for compaction
 * `progress/` notes, todos, etc. Create this when the framework has no equivalent folder of its own
-* `outdated/` move superseded plans here verbatim (folders are git-ignored), so the user can review or pull them back later
 * `drafts/` where the user drops pre-session material; merge incoming items with what is already here
 * `templates/` prompt template per role (see below)
 * `templates/` special treatment: if you are on a git worktree but not main worktree, resolve the main worktree and scout for gitgnored templates/ folder with prompt templates. Then symlink their `templates/` to your root folder. This way templates are shared per repo, across agent runs. As user tweaks those, the tweaks are propagated across. Start with the templates already there.
 
 ## Model aliases (effort in parenthesis):
 
- | Provider  | WEAK                     | MEDIUM              | STRONG           |
- |-----------|--------------------------|---------------------|------------------|
- | Anthropic | Haiku (high)             | Sonnet (low)        | Opus (medium)    |
- | OpenAI    | gpt-5.4-mini (high)      | gpt-5.4 (low)       | gpt-5.5 (medium) |
- | Fireworks | deepseek-v4-flash (high) | minimax-m3 (medium) | glm-5p2 (high)   |
+ | Provider  | WEAK                     | MEDIUM              | STRONG                 | MAX                  |
+ |-----------|--------------------------|---------------------|------------------------|----------------------|
+ | Anthropic | Haiku (high)             | Sonnet (low)        | Opus (medium)          | Fable (medium)       |
+ | OpenAI    | gpt-5.4-mini (high)      | gpt-5.6-luna (low)  | gpt-5.6-terra (medium) | gpt-5.6-sol (medium) |
+ | Fireworks | deepseek-v4-flash (high) | minimax-m3 (medium) | glm-5p2 (low)          | glm-5p2 (high)       |
+ | xAI       | grok-4.5 (low)           | grok-4.5 (low)      | grok-4.5 (medium)      | grok-4.5 (high)      |
  
-* Detect your model and stay on the same provider you are for the session
 * List available models, sometimes provider is part of the prefix
-* Note: Ignore effort if your harness doesn't support it
+* Detect your model and stay on the same provider you are for the session
+* Ignore effort if your harness doesn't support it
 
 ## How you work - You delegate
 
@@ -43,6 +45,8 @@ Ignore this file, you got here by mistake.
 * Delegate everything you can to subagents. Avoid coding, unless fix is 10~20 lines of code or update docs like 2-3 paragraphs
 * Read documentation yourself, but scouting, file searching, codebase understanding, reviewing other agents output, etc. are to be delegated to subagents
 * Pass relevant documentation to subagents often
+* Never use sub-agent "roles" or "types" that have read-only file access. If "Plan" mode or "EnterPlanMode" supports writing to files, we should use it. Otherwise we use general purpose and tell it to load relevant planing skills.
+
 
 **Subagent relay**
 * Name subagents, follow user provided naming rule, or silently choose
@@ -55,7 +59,7 @@ Ignore this file, you got here by mistake.
 **Adjusted behavior based on your model**
 * If you are a WEAK model, don't try to understand architecture
 * If you are a WEAK model during multi-step execution of plans, ask narrow questions to the planner instead of user
-* When you are WEAK and WEAK implementer disagrees with the design/architecture, halt and escalate to the user
+* When you are MEDIUM and MEDIUM implementer disagrees with the design/architecture, escalete to a STRONG agent
 * If you are a STRONG model, catch subagent architectural mistakes via their responses and summaries, spawn a narrow scoped reviewer to check the code if you are suspicious of mistakes from WEAK agents summaries
 
 ## Agent "watchdog" with ScheduleWakeup
