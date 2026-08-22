@@ -1,0 +1,36 @@
+#!/bin/bash
+# Check that the Hyprland app-rule chain is intact.
+# Static only: reads files, starts nothing, opens no windows.
+
+hypr="$HOME/.config/hypr"
+fail=0
+say() {
+  echo "omarchy_lint: $1" >&2
+  fail=1
+}
+
+grep -qE '^[[:space:]]*require\("hypr\.apps"\)' "$hypr/hyprland.lua" 2>/dev/null ||
+  say "hyprland.lua does not require hypr.apps, so no window rule loads"
+
+if [[ -r $hypr/apps.lua ]]; then
+  # require_all finds files with `find -type f`, which does not match the
+  # symlinks stow creates. Ignore comment lines, which may name it.
+  grep -vE '^[[:space:]]*--' "$hypr/apps.lua" | grep -q "require_all" &&
+    say "apps.lua uses require_all, which skips stow symlinks"
+
+  while read -r mod; do
+    [[ -r "$hypr/apps/$mod.lua" ]] || say "apps.lua requires missing apps/$mod.lua"
+  done < <(grep -oP 'require\("hypr\.apps\.\K[^"]+' "$hypr/apps.lua")
+
+  for file in "$hypr"/apps/*.lua; do
+    [[ -e $file ]] || continue
+    name=$(basename "$file" .lua)
+    grep -q "require(\"hypr.apps.$name\")" "$hypr/apps.lua" ||
+      say "apps/$name.lua exists but apps.lua never requires it"
+  done
+else
+  say "apps.lua is missing or unreadable"
+fi
+
+((fail)) && exit 1
+echo "omarchy_lint: Hyprland app-rule chain OK"

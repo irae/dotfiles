@@ -40,6 +40,26 @@ stow bin
 
 That's it. Four steps, relative to the dotfiles folder, no fluff.
 
+## Omarchy dotfiles
+
+Omarchy quattro loads Hyprland config from Lua. It has no user hook for window
+rules, so the chain is:
+
+```
+hyprland.lua → require("hypr.apps") → apps.lua → apps/*.lua
+```
+
+`hyprland.lua` is a user file, so the extra `require` line is supported.
+`apps.lua` is mine — Omarchy ships no user equivalent. It uses explicit
+`require` calls, because Omarchy's `require_all` helper finds files with
+`find -type f`, which does not match the symlinks stow creates.
+
+Run `omarchy_lint` to check the chain. It only reads files. It also runs after
+every `omarchy update`, through the hook in
+`omarchy/.config/omarchy/hooks/post-update.d/`.
+
+A major Omarchy release can change all of this. Expect to redo it then.
+
 ## Linux keyboard
 
 [linux-keyb.md](linux-keyb.md) — typing Portuguese and code on one US-layout keyboard. How macOS, Windows and Linux each solve it, and a comparison of the Linux options.

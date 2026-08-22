@@ -1,0 +1,5 @@
+#!/bin/bash
+# Warn if an Omarchy update broke the Hyprland app-rule chain.
+
+"$HOME/.bin/omarchy_lint" ||
+  notify-send -u critical "Omarchy update" "omarchy_lint failed. Window rules may not load."
