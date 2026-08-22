@@ -40,6 +40,10 @@ stow bin
 
 That's it. Four steps, relative to the dotfiles folder, no fluff.
 
+## Linux keyboard
+
+[linux-keyb.md](linux-keyb.md) — typing Portuguese and code on one US-layout keyboard. How macOS, Windows and Linux each solve it, and a comparison of the Linux options.
+
 ## rethinkdb-python macOS bugs
 
 After `pipx install/upgrade/reinstall rethinkdb`, run `patch-rethinkdb-python` to fix unreported upstream bugs (`--help` crash, dump/restore/export/import crashing with "cannot pickle '_thread._local' object" on macOS; see the script's comments).
