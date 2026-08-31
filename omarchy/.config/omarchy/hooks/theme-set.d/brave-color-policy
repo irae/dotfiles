@@ -1,0 +1,17 @@
+#!/bin/bash
+# Undo Omarchy's forced Brave color policy after every theme change, so each
+# Brave profile keeps its own theme (brave://settings/appearance) instead of
+# all profiles being repainted the same Omarchy theme color. Chromium/Brave's
+# local managed-policy JSON is machine-wide, not per-profile, so removing it
+# for Brave and letting each profile's own saved theme apply is the only way
+# to get per-profile color out of it.
+#
+# Requires the root helper and sudoers rule under omarchy/system/ in this
+# repo (not stowed — see README.md for one-time setup). Silently does
+# nothing if that setup hasn't been done yet.
+
+sudo -n /usr/local/bin/omarchy-brave-clear-color-policy 2>/dev/null || exit 0
+
+if pgrep -x brave >/dev/null; then
+  brave --refresh-platform-policy --no-startup-window &>/dev/null
+fi

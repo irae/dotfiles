@@ -1,0 +1,21 @@
+#!/bin/bash
+# Deletes Omarchy's machine-wide Brave color policy so each Brave profile
+# falls back to its own saved theme (brave://settings/appearance) instead of
+# one forced color for every profile. Chromium's local managed-policy JSON
+# files apply to the whole browser, not one profile, so this is the only way
+# to let profiles diverge.
+#
+# Installed at /usr/local/bin/omarchy-brave-clear-color-policy (see
+# ../../README.md in this repo for setup) and granted passwordless sudo by
+# /etc/sudoers.d/omarchy-brave-color-policy (../sudoers.d here), so the
+# theme-set.d hook (../../.config/omarchy/hooks/theme-set.d) can run it
+# non-interactively. Re-run after every Omarchy theme change, since
+# omarchy-theme-set-browser recreates the file each time.
+set -euo pipefail
+
+dest=/etc/brave/policies/managed/color.json
+
+[[ -e $dest || -L $dest ]] || exit 0
+[[ -f $dest && ! -L $dest ]] || exit 1
+
+rm -f -- "$dest"

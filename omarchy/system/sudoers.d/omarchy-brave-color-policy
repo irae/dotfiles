@@ -1,0 +1,5 @@
+# Lets the invoking user delete Omarchy's forced Brave color policy without a
+# password, so ~/.config/omarchy/hooks/theme-set.d/brave-color-policy can run
+# it non-interactively after every Omarchy theme change. Scoped to this one
+# script, no arguments. See ../usr-local-bin and ../../README.md in this repo.
+%wheel ALL=(root) NOPASSWD: /usr/local/bin/omarchy-brave-clear-color-policy
