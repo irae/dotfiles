@@ -34,7 +34,7 @@
     pager = delta
     excludesfile = ~/.gitignore
     autocrlf = false
-	editor = vi
+	editor = nvim
 
 [user]
 	name = Irae Carvalho
