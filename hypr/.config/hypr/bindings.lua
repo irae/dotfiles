@@ -29,10 +29,10 @@
 -- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")
 
 -- WhatsApp: the stock binding routes through omarchy-launch-webapp, which
--- follows the default browser/profile and can land on the wrong Brave
--- profile. Pin it to Brave's personal profile explicitly.
+-- follows the last-used Brave profile and can land on the work profile.
+-- Pin it to Brave's personal profile (Default) explicitly.
 hl.unbind("SUPER + SHIFT + ALT + G")
 o.bind("SUPER + SHIFT + ALT + G", "WhatsApp", {
-  launch = [[brave --app=https://web.whatsapp.com/ --profile-directory="Profile 3"]],
+  launch = [[brave --app=https://web.whatsapp.com/ --profile-directory="Default"]],
   focus = [[^(.*whatsapp\.com.*)$]],
 })

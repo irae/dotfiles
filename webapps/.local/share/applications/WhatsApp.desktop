@@ -2,7 +2,7 @@
 Version=1.0
 Name=WhatsApp
 Comment=WhatsApp
-Exec=brave --app=https://web.whatsapp.com/ --no-default-browser-check --profile-directory="Profile 3" %U
+Exec=brave --app=https://web.whatsapp.com/ --no-default-browser-check --profile-directory="Default" %U
 Terminal=false
 Type=Application
 Icon=whatsapp

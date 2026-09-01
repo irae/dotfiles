@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Figma
+Comment=Figma
+Exec=brave --app=https://figma.com/ --no-default-browser-check --profile-directory="Profile 3" %U
+Terminal=false
+Type=Application
+Icon=/home/irae/.local/share/applications/icons/Figma.png
+StartupNotify=true
