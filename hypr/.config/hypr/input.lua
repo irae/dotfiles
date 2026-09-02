@@ -57,8 +57,10 @@
 -- hl.gesture({ fingers = 3, direction = "right", action = function() hl.dispatch(hl.dsp.focus({ direction = "r" })) end })
 
 -- macOS ABC layout: accents on Right Alt, plain punctuation for code.
+-- Compose key: Left Ctrl + Right Alt.
 hl.config({
   input = {
     kb_variant = "mac",
+    kb_options = "compose:lctrl-altgr",
   },
 })
