@@ -83,8 +83,6 @@
 
 [delta]
     features = decorations
-    syntax-theme = Monokai Extended
-    default-language = bash
 
 [delta "interactive"]
     keep-plus-minus-markers = false
