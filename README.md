@@ -15,6 +15,7 @@ sudo apt install -y stow git-delta git-extras jq ripgrep
 git clone [repo] ~/.dotfiles
 cd ~/.dotfiles
 stow git
+stow lazygit
 stow bin
 ```
 
