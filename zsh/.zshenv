@@ -18,6 +18,9 @@ export NVM_DIR="$HOME/.nvm"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+# Personal scripts, stowed from the dotfiles bin package
+export PATH="$HOME/.bin:$PATH"
+
 # Docker Desktop CLI (command path belongs in .zshenv)
 export DOCKER_DESKTOP_BIN="/Applications/Docker.app/Contents/Resources/bin"
 if [ -d "$DOCKER_DESKTOP_BIN" ]; then

@@ -48,6 +48,11 @@ if [[ "$OSTYPE" == darwin* ]]; then
     alias ls="ls -Gh"
 fi
 
+# macOS ships a real `open`. Elsewhere Omarchy defines this for bash only.
+if [[ "$OSTYPE" != darwin* ]]; then
+    open() ( xdg-open "$@" >/dev/null 2>&1 & )
+fi
+
 # This tricks `pi` coding agent to have a complete separate installation
 function pi-rpiv() {
     export PI_CODING_AGENT_DIR="$HOME/.pi-rpiv"
