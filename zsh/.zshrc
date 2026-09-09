@@ -109,7 +109,7 @@ function deps {
     jq '. | with_entries( select(.key|contains("ependencies")) )' package.json
 }
 
-if [ "$(arch)" = "i386" ]; then
+if command -v arch >/dev/null 2>&1 && [ "$(arch)" = "i386" ]; then
     function stop {
         PIDS=( `fuser /usr/libexec/rosetta/runtime 2> /dev/null` )
         WAIT=0

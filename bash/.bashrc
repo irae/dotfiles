@@ -17,7 +17,11 @@ source "$OMARCHY_PATH/default/bash/rc"
 export PATH="$HOME/.bin:$PATH"
 
 export NVM_DIR="$HOME/.config/nvm"
+# Omarchy turns command hashing off for mise, but nvm runs `hash -r` as it
+# loads and complains when hashing is off. Turn it on for the load only.
+set -h
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+set +h
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # zeditor's normal launch path forks/detaches before creating its window;
