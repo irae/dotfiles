@@ -1,4 +1,6 @@
 .DS_Store
 node_modules/
+.brave-default-profile
 **/.claude/settings.local.json
 docs/superpowers/
+scratchpad/

@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# omarchy:summary=Open links in the Brave profile chosen by the current directory.
+# omarchy:args=[url-or-file]...
+
+set -uo pipefail
+
+marker_filename=".brave-default-profile"
+fallback_profile="Default"
+
+trim_spaces() {
+    sed 's/^[[:space:]]*//; s/[[:space:]]*$//'
+}
+
+is_inside_home() {
+    local directory="$1"
+
+    if [[ $directory == "$HOME" ]]; then
+        return 0
+    fi
+
+    if [[ $directory == "$HOME"/* ]]; then
+        return 0
+    fi
+
+    return 1
+}
+
+find_marker_file() {
+    local directory="$PWD"
+
+    while is_inside_home "$directory"; do
+        local candidate="$directory/$marker_filename"
+
+        if [[ -r $candidate ]]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+
+        if [[ $directory == "$HOME" ]]; then
+            return 1
+        fi
+
+        directory=$(dirname "$directory")
+    done
+
+    return 1
+}
+
+choose_profile() {
+    local marker_file
+    local profile
+
+    marker_file=$(find_marker_file)
+
+    if [[ -z $marker_file ]]; then
+        printf '%s\n' "$fallback_profile"
+        return
+    fi
+
+    profile=$(head -1 "$marker_file" | trim_spaces)
+
+    if [[ -z $profile ]]; then
+        profile="$fallback_profile"
+    fi
+
+    printf '%s\n' "$profile"
+}
+
+make_absolute() {
+    local argument="$1"
+
+    if [[ -e $argument ]]; then
+        realpath -- "$argument"
+    else
+        printf '%s\n' "$argument"
+    fi
+}
+
+profile=$(choose_profile)
+
+if [[ $# -eq 0 ]]; then
+    exec brave --profile-directory="$profile"
+fi
+
+targets=()
+
+for argument in "$@"; do
+    targets+=("$(make_absolute "$argument")")
+done
+
+exec brave --profile-directory="$profile" "${targets[@]}"

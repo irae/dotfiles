@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Brave Custom Router
+Comment=Open links in the Brave profile chosen by the current directory
+Exec=/home/irae/.bin/brave-custom-router %U
+Type=Application
+NoDisplay=true
+Terminal=false
+StartupNotify=false
+MimeType=x-scheme-handler/http;x-scheme-handler/https;text/html;
