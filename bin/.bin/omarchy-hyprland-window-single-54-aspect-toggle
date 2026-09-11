@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# omarchy:summary=Toggle single-window 5:4 aspect ratio.
+# omarchy:args=
+
+FLAG_FILE="$HOME/.local/state/omarchy/toggles/hypr/single-window-aspect-ratio.lua"
+FLAG_SOURCE="$HOME/.config/hypr/toggles/single-window-aspect-ratio.lua"
+
+on() {
+  if [[ -f $FLAG_SOURCE ]]; then
+    mkdir -p "$(dirname "$FLAG_FILE")"
+    cp "$FLAG_SOURCE" "$FLAG_FILE"
+  else
+    echo "Flag source not found: $FLAG_SOURCE" >&2
+    exit 1
+  fi
+}
+
+off() {
+  rm -f "$FLAG_FILE"
+}
+
+toggle() {
+  if [[ -f $FLAG_FILE ]]; then
+    off
+    echo "off"
+  else
+    on
+    echo "on"
+  fi
+}
+
+case "${1:-toggle}" in
+  on) on ;;
+  off) off ;;
+  toggle) toggle ;;
+  *)
+    echo "Usage: $0 [on|off|toggle]" >&2
+    exit 1
+    ;;
+esac
+
+hyprctl reload >/dev/null

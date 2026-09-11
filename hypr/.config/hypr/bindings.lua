@@ -36,3 +36,10 @@ o.bind("SUPER + SHIFT + ALT + G", "WhatsApp", {
   launch = [[brave --app=https://web.whatsapp.com/ --profile-directory="Default"]],
   focus = [[^(.*whatsapp\.com.*)$]],
 })
+
+hl.unbind("SUPER + CTRL + BACKSPACE")
+o.bind(
+  "SUPER + CTRL + BACKSPACE",
+  "Toggle single-window 5:4 aspect ratio",
+  (os.getenv("HOME") or "") .. "/.bin/omarchy-hyprland-window-single-54-aspect-toggle"
+)
