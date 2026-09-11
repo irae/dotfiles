@@ -20,8 +20,8 @@ hl.config({
     rounding = 8,
 
     -- Dim unfocused windows (0.0 = no dim, 1.0 = fully dimmed).
-    dim_inactive = true,
-    dim_strength = 0.15,
+    -- dim_inactive = true,
+    -- dim_strength = 0.15,
   },
 })
 
@@ -42,9 +42,10 @@ hl.config({
 -- })
 
 -- https://wiki.hypr.land/Configuring/Layouts/Scrolling-Layout/
--- hl.config({
---   scrolling = {
---     -- See only one column per screen instead of two.
---     column_width = 0.97,
---   },
--- })
+hl.config({
+  scrolling = {
+    -- See only one column per screen instead of two.
+    column_width = 0.4,
+    fullscreen_on_one_column = false,
+  },
+})
