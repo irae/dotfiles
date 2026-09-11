@@ -43,3 +43,34 @@ o.bind(
   "Toggle single-window 5:4 aspect ratio",
   (os.getenv("HOME") or "") .. "/.bin/omarchy-hyprland-window-single-54-aspect-toggle"
 )
+
+local function active_layout()
+  return hl.get_active_special_workspace() or hl.get_active_workspace()
+end
+
+hl.unbind("SUPER + J")
+hl.bind("SUPER + J", function()
+  local workspace = active_layout()
+
+  if not workspace then
+    return
+  end
+
+  if workspace.tiled_layout == "scrolling" then
+    hl.dispatch(hl.dsp.layout("consume"))
+  else
+    hl.dispatch(hl.dsp.layout("togglesplit"))
+  end
+end, {
+  description = "Toggle split or consume window",
+})
+
+hl.bind("SUPER + SHIFT + J", function()
+  local workspace = active_layout()
+
+  if workspace and workspace.tiled_layout == "scrolling" then
+    hl.dispatch(hl.dsp.layout("expel"))
+  end
+end, {
+  description = "Expel window from column",
+})
