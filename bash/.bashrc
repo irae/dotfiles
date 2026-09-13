@@ -32,3 +32,11 @@ set +h
 # If you're reading this because zed opens fine without --foreground now,
 # the bug is probably fixed upstream — drop the alias.
 alias zed="zeditor --foreground"
+
+# Merge bash history across panes/windows instead of last-to-close wins
+shopt -s histappend
+HISTSIZE=10000
+HISTFILESIZE=10000
+HISTTIMEFORMAT='%F %T '
+# Sync history: read new entries, write current session, clear and reload
+PROMPT_COMMAND="history -n; history -w; history -c; $PROMPT_COMMAND"
