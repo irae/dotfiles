@@ -34,9 +34,5 @@ set +h
 alias zed="zeditor --foreground"
 
 # Merge bash history across panes/windows instead of last-to-close wins
-shopt -s histappend
-HISTSIZE=10000
-HISTFILESIZE=10000
 HISTTIMEFORMAT='%F %T '
-# Sync history: read new entries, write current session, clear and reload
-PROMPT_COMMAND="history -n; history -w; history -c; $PROMPT_COMMAND"
+PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
