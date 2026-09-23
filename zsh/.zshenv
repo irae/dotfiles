@@ -32,9 +32,3 @@ fi
 
 # Created by `pipx` on 2026-05-21 21:54:43
 export PATH="$PATH:/Users/irae/.local/bin"
-
-export PNPM_HOME="/Users/irae/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac

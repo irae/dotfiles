@@ -203,17 +203,20 @@ else
     }
 fi
 
-# pnpm
-export PNPM_HOME="/Users/irae/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
-
 # >>> grok installer >>>
 export PATH="$HOME/.grok/bin:$PATH"
 fpath=(~/.grok/completions/zsh $fpath)
 autoload -Uz compinit && compinit -C
 # <<< grok installer <<<
+
+# pnpm
+export PNPM_HOME="/Users/irae/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
+
+# prism-llama: PrismML llama.cpp fork (Q2_0/Q1_0 ternary support), installed side-by-side
+# in ~/prism-llama/ - if you remove this alias, also delete ~/prism-llama/ (binaries).
+alias prism-llama="$HOME/prism-llama/llama-server"

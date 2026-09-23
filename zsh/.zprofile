@@ -1,3 +1,7 @@
+# The following lines were added by Docker Desktop to add commands to your PATH.
+export PATH="$PATH:/Users/irae/.docker/bin"
+# End of Docker Desktop section.
+
 # Load order: .zshenv -> .zprofile -> .zshrc -> .zlogin -> .zlogout
 # ~/.zshenv  - every zsh invocation, including scripts and editor-launched shells
 # ~/.zprofile - login shells; session-level setup
