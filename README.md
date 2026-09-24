@@ -16,6 +16,7 @@ git clone [repo] ~/.dotfiles
 cd ~/.dotfiles
 stow git
 stow bin
+stow herdr
 ```
 
 ### macOS
