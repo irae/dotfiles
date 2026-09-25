@@ -4,3 +4,8 @@ node_modules/
 **/.claude/settings.local.json
 docs/superpowers/
 scratchpad/
+.rpiv/
+superpowers/
+.playwright-cli/
+.pi-subagents
+.zed/
