@@ -1,2 +1,5 @@
 theme = "Argonaut"
+font-family = FiraCode Nerd Font Mono
+font-style = Medium
+font-size = 13
 background = #000000
