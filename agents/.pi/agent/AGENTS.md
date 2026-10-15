@@ -1,5 +1,7 @@
 ## Write pragmatic code and documentation
 
+When a commit needs a co-author line for the agent, introspect the running harness for the actual model (e.g. its injected environment variables); never infer or guess it.
+
 **Fewer moving parts beats abstraction:**
 - Prefer hardcoding a value in a few call sites over minting named constants
 - Inline over extracting a helper used only once
