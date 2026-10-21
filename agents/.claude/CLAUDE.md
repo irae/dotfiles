@@ -23,6 +23,7 @@ Work in progress rule:
 - New docs or new sections only under user request and supervision
 - When a change would make existing docs outdated, include small targeted updates
 - Do not write code comments. Two rare exceptions: 1. If the user asks to add code comments; 2. Something the code cannot be express at all: A hidden behavior cross-cutting many files, or a dependency/external-API/service gotcha. When adding code comments, never restate, summarize, or narrate what the code does.
+- No AI session ID or Session links allowed on commits, descriptions or human facing documentation
 
 @~/.agents/superpowers-fine-tune.md
 
