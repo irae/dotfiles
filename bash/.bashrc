@@ -1,38 +1,86 @@
 # If not running interactively, don't do anything (leave this at the top of this file)
 [[ $- != *i* ]] && return
 
-# All the default Omarchy aliases and functions
-# (don't mess with these directly, just overwrite them here!)
-# /etc/omarchy.conf is written by omarchy-dev-link. When absent, force the
-# package default instead of preserving a stale inherited dev-link value before
-# we decide which rc file to source.
+# Load Omarchy's Bash defaults when present; otherwise use the fallback below.
 if [[ -f /etc/omarchy.conf ]]; then
   source /etc/omarchy.conf
   export OMARCHY_PATH="${OMARCHY_PATH:-/usr/share/omarchy}"
 else
-  export OMARCHY_PATH=/usr/share/omarchy
+  export OMARCHY_PATH="${OMARCHY_PATH:-/usr/share/omarchy}"
 fi
-source "$OMARCHY_PATH/default/bash/rc"
 
-export PATH="$HOME/.bin:$PATH"
+if [[ -r "$OMARCHY_PATH/default/bash/rc" ]]; then
+  source "$OMARCHY_PATH/default/bash/rc"
+else
+  if command -v eza >/dev/null 2>&1; then
+    alias ls='eza -lh --group-directories-first --icons=auto'
+    alias lsa='ls -a'
+    alias lt='eza --tree --level=2 --long --icons --git'
+    alias lta='lt -a'
+  fi
 
-export NVM_DIR="$HOME/.config/nvm"
-# Omarchy turns command hashing off for mise, but nvm runs `hash -r` as it
-# loads and complains when hashing is off. Turn it on for the load only.
-set -h
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-set +h
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+  if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init bash)"
+    alias cd='zd'
+    zd() {
+      if (( $# == 0 )); then
+        builtin cd ~ || return
+      elif [[ -d $1 ]]; then
+        builtin cd "$1" || return
+      else
+        if ! z "$@"; then
+          echo 'Error: Directory not found'
+          return 1
+        fi
 
-# zeditor's normal launch path forks/detaches before creating its window;
-# on this machine that detach loses the window entirely (process runs,
-# loads the project, never maps a Wayland surface). --foreground skips the
-# detach and the window shows up. Bug found 2026-08-31 on zed 1.16.2 /
-# omazed 2.1.0, ~3 days after both were upgraded from 1.14.2 / 2.0.1.
-# If you're reading this because zed opens fine without --foreground now,
-# the bug is probably fixed upstream — drop the alias.
-alias zed="zeditor --foreground"
+        printf '\U000F17A9 '
+        pwd
+      fi
+    }
+  fi
 
-# Merge bash history across panes/windows instead of last-to-close wins
+  alias ..='cd ..'
+  alias ...='cd ../..'
+  alias ....='cd ../../..'
+
+  if [[ ${TERM:-} != dumb ]] && command -v starship >/dev/null 2>&1; then
+    eval "$(starship init bash --print-full-init)"
+  fi
+
+  if command -v fzf >/dev/null 2>&1; then
+    if [[ -r /usr/share/fzf/key-bindings.bash ]]; then
+      source /usr/share/fzf/key-bindings.bash
+    elif [[ -r /usr/share/doc/fzf/examples/key-bindings.bash ]]; then
+      source /usr/share/doc/fzf/examples/key-bindings.bash
+    fi
+  fi
+fi
+
+export PATH="$HOME/.bin:$HOME/.local/bin:$PATH"
+
+if [[ -r "$HOME/.deno/env" ]]; then
+  source "$HOME/.deno/env"
+fi
+if [[ -r "$HOME/.local/share/bash-completion/completions/deno.bash" ]]; then
+  source "$HOME/.local/share/bash-completion/completions/deno.bash"
+fi
+
+export PATH="$HOME/.grok/bin:$PATH"
+if [[ -r "$HOME/.grok/completions/bash/grok.bash" ]]; then
+  source "$HOME/.grok/completions/bash/grok.bash"
+fi
+
+if [[ -f "$HOME/.bash_aliases" ]]; then
+  source "$HOME/.bash_aliases"
+fi
+
+# Merge Bash history across panes/windows instead of last-to-close wins.
+HISTCONTROL=ignoreboth
+HISTSIZE=10000
+HISTFILESIZE=50000
+shopt -s histappend
 HISTTIMEFORMAT='%F %T '
-PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+PROMPT_COMMAND="history -a; history -c; history -r${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+
+# Zed detaches by default; --foreground keeps it attached to this shell.
+alias zed='zeditor'
