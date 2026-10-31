@@ -1,0 +1,30 @@
+#!/bin/sh
+
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    cat <<'EOF'
+Usage: ssh-lan-or-tailnet HOST PORT
+
+Try HOST.local on the SSH port first. If it is reachable, connect there;
+otherwise connect to HOST, which should resolve through Tailscale.
+
+Add this to ~/.ssh/config:
+
+Host arrietty sheeta kamaji moro
+    ProxyCommand ~/.bin/ssh-lan-or-tailnet %h %p
+EOF
+    exit 0
+fi
+
+if [ "$#" -ne 2 ]; then
+    echo "Usage: ssh-lan-or-tailnet HOST PORT (or --help)" >&2
+    exit 2
+fi
+
+host=$1
+port=$2
+
+if nc -z -w 2 "$host.local" "$port" >/dev/null 2>&1; then
+    exec nc "$host.local" "$port"
+fi
+
+exec nc "$host" "$port"
