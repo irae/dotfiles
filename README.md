@@ -102,6 +102,25 @@ sudo visudo -cf /etc/sudoers.d/omarchy-brave-color-policy
 
 Without this setup the hook silently no-ops (no passwordless sudo yet).
 
+## Pi multi instance
+
+`pi-rpiv` and `pi-super` are zsh functions in `zsh/.zshrc` that run Pi with
+separate agent directories. To set up the directories and shared files on a
+machine with Pi already installed and authenticated, stow the shell and bin
+packages, then run:
+
+```bash
+stow zsh bin
+setup-pi-multi-instance
+```
+
+The script creates the RPIV and Superpowers profile/session directories and
+symlinks both profiles' `auth.json` files to `~/.pi/agent/auth.json`. It also
+symlinks the Superpowers profile's `web-search.json` to the main Pi config
+(`~/.pi/agent/web-search.json`, or the legacy `~/.pi/web-search.json`). It
+leaves existing files and mismatched symlinks untouched and exits with an
+error rather than replacing them. It does not install Pi or any extensions.
+
 ## Linux keyboard
 
 [linux-keyb.md](linux-keyb.md) — typing Portuguese and code on one US-layout keyboard. How macOS, Windows and Linux each solve it, and a comparison of the Linux options.

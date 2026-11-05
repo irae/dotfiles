@@ -60,6 +60,12 @@ function pi-rpiv() {
     pi "$@"
 }
 
+function pi-super() {
+    export PI_CODING_AGENT_DIR="$HOME/.pi-super"
+    export PI_CODING_AGENT_SESSION_DIR="$HOME/.pi-super/sessions"
+    pi "$@"
+}
+
 function nvm_use(){
     local nvmrc_path
     nvmrc_path="$(nvm_find_nvmrc)"
