@@ -4,6 +4,7 @@ set -eu
 main_dir="$HOME/.pi/agent"
 rpiv_dir="$HOME/.pi-rpiv"
 super_dir="$HOME/.pi-super"
+matt_dir="$HOME/.pi-matt"
 auth_file="$main_dir/auth.json"
 
 if [ ! -f "$auth_file" ]; then
@@ -28,9 +29,10 @@ ensure_link() {
     ln -s "$source" "$target"
 }
 
-mkdir -p "$rpiv_dir/sessions" "$super_dir/sessions"
+mkdir -p "$rpiv_dir/sessions" "$super_dir/sessions" "$matt_dir/sessions"
 ensure_link "$auth_file" "$rpiv_dir/auth.json"
 ensure_link "$auth_file" "$super_dir/auth.json"
+ensure_link "$auth_file" "$matt_dir/auth.json"
 
 if [ -f "$main_dir/web-search.json" ]; then
     ensure_link "$main_dir/web-search.json" "$super_dir/web-search.json"

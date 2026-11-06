@@ -53,17 +53,19 @@ if [[ "$OSTYPE" != darwin* ]]; then
     open() ( xdg-open "$@" >/dev/null 2>&1 & )
 fi
 
-# This tricks `pi` coding agent to have a complete separate installation
 function pi-rpiv() {
-    export PI_CODING_AGENT_DIR="$HOME/.pi-rpiv"
-    export PI_CODING_AGENT_SESSION_DIR="$HOME/.pi-rpiv/sessions"
-    pi "$@"
+    PI_CODING_AGENT_DIR="$HOME/.pi-rpiv" \
+        PI_CODING_AGENT_SESSION_DIR="$HOME/.pi-rpiv/sessions" pi "$@"
 }
 
 function pi-super() {
-    export PI_CODING_AGENT_DIR="$HOME/.pi-super"
-    export PI_CODING_AGENT_SESSION_DIR="$HOME/.pi-super/sessions"
-    pi "$@"
+    PI_CODING_AGENT_DIR="$HOME/.pi-super" \
+        PI_CODING_AGENT_SESSION_DIR="$HOME/.pi-super/sessions" pi "$@"
+}
+
+function pi-matt() {
+    PI_CODING_AGENT_DIR="$HOME/.pi-matt" \
+        PI_CODING_AGENT_SESSION_DIR="$HOME/.pi-matt/sessions" pi "$@"
 }
 
 function nvm_use(){
