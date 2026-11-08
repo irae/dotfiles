@@ -104,40 +104,17 @@ Without this setup the hook silently no-ops (no passwordless sudo yet).
 
 ## Pi multi instance
 
-`pi-rpiv`, `pi-super`, and `pi-matt` are zsh functions in `zsh/.zshrc` that run
-Pi with separate agent directories. Their environment settings apply only to
-the invoked command, not subsequent `pi` commands. To set up the directories and shared files on a
-machine with Pi already installed and authenticated, stow the shell and bin
-packages, then run:
+Stow `bin` to install `pi-rpiv`, `pi-super`, and `pi-matt` executable wrappers.
+They run Pi with separate agent and session directories without changing the
+parent shell. Pi must already be installed and authenticated. If Pi is not on
+PATH, the wrappers try the default nvm environment.
 
-```bash
-stow zsh bin
-setup-pi-multi-instance
-```
-
-The script creates the RPIV, Superpowers, and Matt profile/session directories
-and symlinks all three profiles' `auth.json` files to `~/.pi/agent/auth.json`. It also
-symlinks the Superpowers profile's `web-search.json` to the main Pi config
-(`~/.pi/agent/web-search.json`, or the legacy `~/.pi/web-search.json`). It
-leaves existing files and mismatched symlinks untouched and exits with an
-error rather than replacing them. It does not install Pi or any extensions.
-
-Install Matt's skills into its profile with:
-
-```bash
-pi-matt install git:github.com/mattpocock/skills
-```
-
-In `~/.pi-matt/settings.json`, use this package entry to load the published
-engineering and productivity skills without the miscellaneous or in-progress
-ones:
-
-```json
-{
-  "source": "git:github.com/mattpocock/skills",
-  "skills": ["skills/engineering/**", "skills/productivity/**"]
-}
-```
+Run `multi-pi-setup` to initialize all profiles, or `multi-pi-setup super`
+(or `rpiv` or `matt`) for one. Setup creates missing directories and settings,
+and links missing `auth.json` files to the main Pi auth file. Super also links
+the main `web-search.json` if present. Existing files are left untouched.
+Setup installs packages for newly configured profiles; use `pi-super update
+--extensions` (or the equivalent profile command) to update them later.
 
 Keep universally shared skills, such as Unslop, in `~/.agents/skills/`. Pi
 loads that directory across profiles. Matt's skills belong only in the
