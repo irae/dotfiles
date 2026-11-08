@@ -1,0 +1,51 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -gt 1 ]; then
+    printf 'Usage: multi-pi-setup [rpiv|super|matt]\n' >&2
+    exit 1
+fi
+
+case "${1:-all}" in
+    all) profiles='rpiv super matt' ;;
+    rpiv|super|matt) profiles=$1 ;;
+    *) printf 'Usage: multi-pi-setup [rpiv|super|matt]\n' >&2; exit 1 ;;
+esac
+
+if [ ! -f "$HOME/.pi/agent/auth.json" ]; then
+    printf 'Main Pi auth file not found: %s\n' "$HOME/.pi/agent/auth.json" >&2
+    exit 1
+fi
+
+for profile in $profiles; do
+    agent_dir="$HOME/.pi-$profile"
+    mkdir -p "$agent_dir/sessions"
+    if [ ! -e "$agent_dir/auth.json" ] && [ ! -L "$agent_dir/auth.json" ]; then
+        ln -s "$HOME/.pi/agent/auth.json" "$agent_dir/auth.json"
+    fi
+    if [ "$profile" = super ] && [ ! -e "$agent_dir/web-search.json" ] && [ ! -L "$agent_dir/web-search.json" ]; then
+        if [ -f "$HOME/.pi/agent/web-search.json" ]; then
+            ln -s "$HOME/.pi/agent/web-search.json" "$agent_dir/web-search.json"
+        elif [ -f "$HOME/.pi/web-search.json" ]; then
+            ln -s "$HOME/.pi/web-search.json" "$agent_dir/web-search.json"
+        fi
+    fi
+    if [ ! -e "$agent_dir/settings.json" ] && [ ! -L "$agent_dir/settings.json" ]; then
+        : > "$agent_dir/.pi-multi-setup-pending"
+        case "$profile" in
+            rpiv)
+                printf '%s\n' '{"packages":["npm:@juicesharp/rpiv-pi","npm:@tintinweb/pi-subagents","npm:@juicesharp/rpiv-ask-user-question","npm:@juicesharp/rpiv-todo","npm:@juicesharp/rpiv-advisor","npm:@juicesharp/rpiv-i18n","npm:@juicesharp/rpiv-web-tools","npm:@juicesharp/rpiv-args","npm:@juicesharp/rpiv-workflow"]}' > "$agent_dir/settings.json"
+                ;;
+            super)
+                printf '%s\n' '{"packages":["git:github.com/obra/superpowers","npm:pi-subagents","npm:pi-web-access"]}' > "$agent_dir/settings.json"
+                ;;
+            matt)
+                printf '%s\n' '{"packages":[{"source":"git:github.com/mattpocock/skills","skills":["skills/engineering/**","skills/productivity/**"]}]}' > "$agent_dir/settings.json"
+                ;;
+        esac
+    fi
+    if [ -f "$agent_dir/.pi-multi-setup-pending" ]; then
+        "$(dirname "$0")/multi-pi-profile" "$profile" update --extensions
+        rm "$agent_dir/.pi-multi-setup-pending"
+    fi
+done

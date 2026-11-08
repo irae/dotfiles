@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+
+profile=$1
+shift
+agent_dir="$HOME/.pi-$profile"
+
+if [ ! -d "$agent_dir/sessions" ] || [ ! -f "$agent_dir/settings.json" ] || [ ! -f "$agent_dir/auth.json" ]; then
+    printf 'Pi profile %s is not set up. Run: multi-pi-setup %s\n' "$profile" "$profile" >&2
+    exit 1
+fi
+
+if ! command -v pi >/dev/null 2>&1 && [ -s "${NVM_DIR:-$HOME/.nvm}/nvm.sh" ]; then
+    export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+    . "$NVM_DIR/nvm.sh" >&2
+    nvm use default >&2
+fi
+
+if ! command -v pi >/dev/null 2>&1; then
+    printf 'pi not found on PATH; initialize your Node version manager first.\n' >&2
+    exit 1
+fi
+
+export PI_CODING_AGENT_DIR="$agent_dir"
+export PI_CODING_AGENT_SESSION_DIR="$agent_dir/sessions"
+exec pi "$@"

@@ -53,21 +53,6 @@ if [[ "$OSTYPE" != darwin* ]]; then
     open() ( xdg-open "$@" >/dev/null 2>&1 & )
 fi
 
-function pi-rpiv() {
-    PI_CODING_AGENT_DIR="$HOME/.pi-rpiv" \
-        PI_CODING_AGENT_SESSION_DIR="$HOME/.pi-rpiv/sessions" pi "$@"
-}
-
-function pi-super() {
-    PI_CODING_AGENT_DIR="$HOME/.pi-super" \
-        PI_CODING_AGENT_SESSION_DIR="$HOME/.pi-super/sessions" pi "$@"
-}
-
-function pi-matt() {
-    PI_CODING_AGENT_DIR="$HOME/.pi-matt" \
-        PI_CODING_AGENT_SESSION_DIR="$HOME/.pi-matt/sessions" pi "$@"
-}
-
 function nvm_use(){
     local nvmrc_path
     nvmrc_path="$(nvm_find_nvmrc)"
