@@ -23,7 +23,7 @@ for profile in $profiles; do
     if [ ! -e "$agent_dir/auth.json" ] && [ ! -L "$agent_dir/auth.json" ]; then
         ln -s "$HOME/.pi/agent/auth.json" "$agent_dir/auth.json"
     fi
-    if [ "$profile" = super ] && [ ! -e "$agent_dir/web-search.json" ] && [ ! -L "$agent_dir/web-search.json" ]; then
+    if { [ "$profile" = super ] || [ "$profile" = matt ]; } && [ ! -e "$agent_dir/web-search.json" ] && [ ! -L "$agent_dir/web-search.json" ]; then
         if [ -f "$HOME/.pi/agent/web-search.json" ]; then
             ln -s "$HOME/.pi/agent/web-search.json" "$agent_dir/web-search.json"
         elif [ -f "$HOME/.pi/web-search.json" ]; then
@@ -40,7 +40,7 @@ for profile in $profiles; do
                 printf '%s\n' '{"packages":["git:github.com/obra/superpowers","npm:pi-subagents","npm:pi-web-access"]}' > "$agent_dir/settings.json"
                 ;;
             matt)
-                printf '%s\n' '{"packages":[{"source":"git:github.com/mattpocock/skills","skills":["skills/engineering/**","skills/productivity/**"]}]}' > "$agent_dir/settings.json"
+                printf '%s\n' '{"packages":[{"source":"git:github.com/mattpocock/skills","skills":["skills/engineering/**","skills/productivity/**"]},"npm:pi-subagents","npm:pi-web-access"]}' > "$agent_dir/settings.json"
                 ;;
         esac
     fi
